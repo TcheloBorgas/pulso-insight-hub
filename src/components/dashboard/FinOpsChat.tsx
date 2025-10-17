@@ -74,7 +74,7 @@ const FinOpsChat = () => {
       {/* Header */}
       <div className="p-4 border-b border-border">
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <DollarSign className="h-5 w-5 text-success" />
+          <DollarSign className="h-5 w-5 text-finops" />
           FinOps Inteligente
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
@@ -98,7 +98,7 @@ const FinOpsChat = () => {
         </div>
         <div className="space-y-1">
           <p className="text-xs text-muted-foreground">Tendência</p>
-          <p className="text-lg font-semibold text-success flex items-center gap-1">
+          <p className="text-lg font-semibold text-finops flex items-center gap-1">
             <TrendingDown className="h-4 w-4" />
             {costSummary.trend}
           </p>

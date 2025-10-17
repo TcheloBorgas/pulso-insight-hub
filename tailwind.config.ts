@@ -22,6 +22,8 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          deep: "hsl(var(--primary-deep))",
+          light: "hsl(var(--primary-light))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -50,6 +52,14 @@ export default {
         info: {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
+        },
+        finops: {
+          DEFAULT: "hsl(var(--finops))",
+          foreground: "hsl(var(--finops-foreground))",
+        },
+        dataAi: {
+          DEFAULT: "hsl(var(--data-ai))",
+          foreground: "hsl(var(--data-ai-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",

@@ -148,7 +148,7 @@ const DataChat = () => {
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <Database className="h-5 w-5 text-info" />
+              <Database className="h-5 w-5 text-dataAi" />
               Inteligência de Dados
             </h2>
             <p className="text-sm text-muted-foreground mt-1">

@@ -36,7 +36,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               htmlFor="layer-finops"
               className="text-sm font-medium cursor-pointer flex items-center gap-2"
             >
-              <Activity className="h-4 w-4 text-primary" />
+              <Activity className="h-4 w-4 text-finops" />
               Camada 5 – Produção/FinOps
             </Label>
             <p className="text-xs text-muted-foreground">
@@ -58,7 +58,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               htmlFor="layer-data"
               className="text-sm font-medium cursor-pointer flex items-center gap-2"
             >
-              <Database className="h-4 w-4 text-info" />
+              <Database className="h-4 w-4 text-dataAi" />
               Camada 6 – Dados & IA
             </Label>
             <p className="text-xs text-muted-foreground">

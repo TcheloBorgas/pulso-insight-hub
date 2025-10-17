@@ -8,89 +8,117 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 13% 13%;
+    /* Paleta "Confiança Corporativa" - Light Mode */
+    --background: 220 33% 98%; /* #F8FAFC */
+    --foreground: 222 47% 11%; /* #0F172A */
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 13% 13%;
+    --card: 214 32% 95%; /* #F1F5F9 */
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 13%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 221 83% 53%;
+    /* Primárias - Azul Profundo/Vivo */
+    --primary: 221 83% 53%; /* #2563EB */
     --primary-foreground: 0 0% 100%;
+    --primary-deep: 221 68% 32%; /* #1E3A8A */
+    --primary-light: 213 97% 87%; /* #DBEAFE */
 
-    --secondary: 220 13% 95%;
-    --secondary-foreground: 220 13% 13%;
+    /* Neutros */
+    --secondary: 214 32% 91%; /* #E2E8F0 */
+    --secondary-foreground: 215 20% 65%;
 
-    --muted: 220 13% 95%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 214 32% 91%; /* #E2E8F0 */
+    --muted-foreground: 215 16% 47%; /* #64748B */
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 213 97% 87%; /* #DBEAFE */
+    --accent-foreground: 221 83% 53%;
 
-    --success: 142 76% 36%;
+    /* Semânticas */
+    --success: 142 71% 45%; /* #16A34A */
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
+    --warning: 25 95% 53%; /* #D97706 */
     --warning-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%; /* #DC2626 */
     --destructive-foreground: 0 0% 100%;
 
-    --info: 199 89% 48%;
+    --info: 221 83% 53%; /* #2563EB */
     --info-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 221 83% 53%;
+    /* Acentos por Seção */
+    --finops: 173 80% 40%; /* #0D9488 - Verde Marinho */
+    --finops-foreground: 0 0% 100%;
+
+    --data-ai: 258 90% 66%; /* #7C3AED - Roxo */
+    --data-ai-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%; /* #E2E8F0 */
+    --input: 214 32% 91%;
+    --ring: 213 97% 87%;
 
     --radius: 0.5rem;
 
+    /* Chat */
     --chat-user: 221 83% 53%;
-    --chat-system: 220 13% 95%;
+    --chat-system: 214 32% 95%;
   }
 
   .dark {
-    --background: 220 13% 13%;
-    --foreground: 0 0% 98%;
+    /* Paleta "Confiança Corporativa" - Dark Mode */
+    --background: 222 47% 11%; /* #0B1220 */
+    --foreground: 210 20% 98%; /* #E5E7EB */
 
-    --card: 220 13% 18%;
-    --card-foreground: 0 0% 98%;
+    --card: 217 33% 17%; /* #111827 */
+    --card-foreground: 210 20% 98%;
 
-    --popover: 220 13% 18%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
+    /* Primárias - Ajustadas para dark */
+    --primary: 213 97% 67%; /* #60A5FA - Azul Claro */
+    --primary-foreground: 222 47% 11%;
+    --primary-deep: 221 83% 53%; /* #2563EB */
+    --primary-light: 221 68% 32%;
 
-    --secondary: 220 13% 23%;
-    --secondary-foreground: 0 0% 98%;
+    /* Neutros Dark */
+    --secondary: 215 25% 27%; /* #1F2937 */
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 220 13% 23%;
-    --muted-foreground: 220 9% 65%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 16% 65%; /* #9CA3AF */
 
-    --accent: 221 83% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 215 25% 27%;
+    --accent-foreground: 213 97% 67%;
 
-    --success: 142 76% 36%;
+    /* Semânticas Dark */
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
+    --warning: 25 95% 53%;
     --warning-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --info: 199 89% 48%;
-    --info-foreground: 0 0% 100%;
+    --info: 213 97% 67%;
+    --info-foreground: 222 47% 11%;
 
-    --border: 220 13% 23%;
-    --input: 220 13% 23%;
-    --ring: 221 83% 53%;
+    /* Acentos por Seção Dark */
+    --finops: 173 80% 40%;
+    --finops-foreground: 0 0% 100%;
 
-    --chat-user: 221 83% 53%;
-    --chat-system: 220 13% 23%;
+    --data-ai: 258 90% 66%;
+    --data-ai-foreground: 0 0% 100%;
+
+    --border: 215 25% 27%;
+    --input: 215 25% 27%;
+    --ring: 213 97% 67%;
+
+    /* Chat Dark */
+    --chat-user: 213 97% 67%;
+    --chat-system: 215 25% 27%;
   }
 }
 
