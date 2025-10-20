@@ -3,6 +3,13 @@ import { Send, Trash2, Copy, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import FileTree from "./FileTree";
+
+interface FileNode {
+  name: string;
+  type: "file" | "folder";
+  children?: FileNode[];
+}
 
 interface PromptHistory {
   id: string;
@@ -15,6 +22,7 @@ const PromptPanel = () => {
   const [requestId, setRequestId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<PromptHistory[]>([]);
+  const [fileStructure, setFileStructure] = useState<FileNode[] | null>(null);
   const { toast } = useToast();
 
   const handleSubmit = () => {
@@ -22,7 +30,7 @@ const PromptPanel = () => {
 
     setLoading(true);
     
-    // Simular envio
+    // Simular envio e geração de estrutura de arquivos
     setTimeout(() => {
       const id = `REQ-${Date.now().toString(36).toUpperCase()}`;
       setRequestId(id);
@@ -34,6 +42,44 @@ const PromptPanel = () => {
       };
       
       setHistory([newEntry, ...history.slice(0, 4)]);
+      
+      // Estrutura de arquivos de exemplo baseada no prompt
+      const mockStructure: FileNode[] = [
+        {
+          name: "src",
+          type: "folder",
+          children: [
+            {
+              name: "components",
+              type: "folder",
+              children: [
+                { name: "Header.tsx", type: "file" },
+                { name: "Footer.tsx", type: "file" },
+              ],
+            },
+            {
+              name: "pages",
+              type: "folder",
+              children: [
+                { name: "Home.tsx", type: "file" },
+                { name: "Dashboard.tsx", type: "file" },
+              ],
+            },
+            {
+              name: "services",
+              type: "folder",
+              children: [
+                { name: "api.ts", type: "file" },
+              ],
+            },
+            { name: "App.tsx", type: "file" },
+          ],
+        },
+        { name: "package.json", type: "file" },
+        { name: "README.md", type: "file" },
+      ];
+      
+      setFileStructure(mockStructure);
       setLoading(false);
       
       toast({
@@ -46,6 +92,7 @@ const PromptPanel = () => {
   const handleClear = () => {
     setPrompt("");
     setRequestId(null);
+    setFileStructure(null);
   };
 
   const handleCopyId = () => {
@@ -121,6 +168,23 @@ const PromptPanel = () => {
           </div>
         )}
       </div>
+
+      {fileStructure && (
+        <div className="border border-border rounded-lg p-4 bg-card">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-foreground">
+              Estrutura de Arquivos Gerada
+            </h3>
+            <span className="text-xs text-muted-foreground">
+              {requestId}
+            </span>
+          </div>
+          <div className="bg-secondary/30 rounded-md p-3 max-h-96 overflow-y-auto">
+            <FileTree structure={fileStructure} />
+          </div>
+        </div>
+      )}
+
 
       {history.length > 0 && (
         <div className="border-t border-border pt-4">
