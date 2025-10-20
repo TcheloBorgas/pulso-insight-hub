@@ -128,12 +128,7 @@ const PromptPanel = () => {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           className="min-h-[120px] resize-none"
-          maxLength={2000}
         />
-        
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>{prompt.length}/2000 caracteres</span>
-        </div>
 
         <div className="flex gap-2">
           <Button 
