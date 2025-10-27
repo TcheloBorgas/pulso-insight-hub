@@ -12,59 +12,113 @@ interface LayerSelectionProps {
 
 const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) => {
   return (
-    <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold text-foreground mb-1">
-          Camadas ativas
+    <div className="space-y-4">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-foreground mb-2">
+          Escolha suas Camadas
         </h2>
         <p className="text-sm text-muted-foreground">
-          Ative para abrir a seção de conversa e análises
+          Selecione as camadas para iniciar suas análises e conversas
         </p>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex items-start space-x-3 p-3 rounded-md border border-border hover:bg-secondary/50 transition-colors">
-          <Checkbox
-            id="layer-finops"
-            checked={activeLayers.finops}
-            onCheckedChange={(checked) =>
-              setActiveLayers({ ...activeLayers, finops: checked as boolean })
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Camada 5 - FinOps */}
+        <div
+          onClick={() => setActiveLayers({ ...activeLayers, finops: !activeLayers.finops })}
+          className={`
+            relative overflow-hidden cursor-pointer
+            rounded-xl border-2 transition-all duration-300
+            ${activeLayers.finops 
+              ? 'border-finops bg-finops/5 shadow-lg shadow-finops/20' 
+              : 'border-border hover:border-finops/50 bg-card hover:shadow-md'
             }
-          />
-          <div className="flex-1 space-y-1">
-            <Label
-              htmlFor="layer-finops"
-              className="text-sm font-medium cursor-pointer flex items-center gap-2"
-            >
-              <Activity className="h-4 w-4 text-finops" />
-              Camada 5 – Produção/FinOps
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              Insights de custo e otimizações em linguagem natural
-            </p>
+          `}
+        >
+          <div className="p-8">
+            <div className="flex items-center justify-between mb-4">
+              <div className={`
+                p-3 rounded-full transition-colors
+                ${activeLayers.finops ? 'bg-finops/20' : 'bg-secondary'}
+              `}>
+                <Activity className={`h-8 w-8 ${activeLayers.finops ? 'text-finops' : 'text-muted-foreground'}`} />
+              </div>
+              <Checkbox
+                id="layer-finops"
+                checked={activeLayers.finops}
+                onCheckedChange={(checked) =>
+                  setActiveLayers({ ...activeLayers, finops: checked as boolean })
+                }
+                onClick={(e) => e.stopPropagation()}
+                className="h-6 w-6"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-foreground">
+                Camada 5
+              </h3>
+              <p className="text-lg font-semibold text-finops">
+                Produção/FinOps
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Insights de custo e otimizações em linguagem natural. Analise gastos, identifique oportunidades de economia e tome decisões financeiras inteligentes.
+              </p>
+            </div>
           </div>
+          
+          {activeLayers.finops && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-finops" />
+          )}
         </div>
 
-        <div className="flex items-start space-x-3 p-3 rounded-md border border-border hover:bg-secondary/50 transition-colors">
-          <Checkbox
-            id="layer-data"
-            checked={activeLayers.data}
-            onCheckedChange={(checked) =>
-              setActiveLayers({ ...activeLayers, data: checked as boolean })
+        {/* Camada 6 - Dados & IA */}
+        <div
+          onClick={() => setActiveLayers({ ...activeLayers, data: !activeLayers.data })}
+          className={`
+            relative overflow-hidden cursor-pointer
+            rounded-xl border-2 transition-all duration-300
+            ${activeLayers.data 
+              ? 'border-dataAi bg-dataAi/5 shadow-lg shadow-dataAi/20' 
+              : 'border-border hover:border-dataAi/50 bg-card hover:shadow-md'
             }
-          />
-          <div className="flex-1 space-y-1">
-            <Label
-              htmlFor="layer-data"
-              className="text-sm font-medium cursor-pointer flex items-center gap-2"
-            >
-              <Database className="h-4 w-4 text-dataAi" />
-              Camada 6 – Dados & IA
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              Explore estrutura, estatísticas e modelos
-            </p>
+          `}
+        >
+          <div className="p-8">
+            <div className="flex items-center justify-between mb-4">
+              <div className={`
+                p-3 rounded-full transition-colors
+                ${activeLayers.data ? 'bg-dataAi/20' : 'bg-secondary'}
+              `}>
+                <Database className={`h-8 w-8 ${activeLayers.data ? 'text-dataAi' : 'text-muted-foreground'}`} />
+              </div>
+              <Checkbox
+                id="layer-data"
+                checked={activeLayers.data}
+                onCheckedChange={(checked) =>
+                  setActiveLayers({ ...activeLayers, data: checked as boolean })
+                }
+                onClick={(e) => e.stopPropagation()}
+                className="h-6 w-6"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-foreground">
+                Camada 6
+              </h3>
+              <p className="text-lg font-semibold text-dataAi">
+                Dados & IA
+              </p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Explore estrutura, estatísticas e modelos de inteligência artificial. Descubra padrões, gere insights e potencialize suas decisões com IA.
+              </p>
+            </div>
           </div>
+          
+          {activeLayers.data && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-dataAi" />
+          )}
         </div>
       </div>
     </div>
