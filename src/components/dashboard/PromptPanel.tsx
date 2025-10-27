@@ -114,7 +114,7 @@ const PromptPanel = () => {
     <div className="bg-card border border-border rounded-lg p-6 space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-foreground mb-1">
-          Descreva sua solicitação
+          Pulso CSA
         </h2>
         <p className="text-sm text-muted-foreground">
           Atalho: Alt+P
