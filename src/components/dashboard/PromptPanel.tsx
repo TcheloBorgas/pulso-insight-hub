@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, Trash2, Copy, Clock } from "lucide-react";
+import { Send, Trash2, Copy, Clock, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -111,34 +111,65 @@ const PromptPanel = () => {
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold text-foreground mb-1">
-          Pulso CSA
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Atalho: Alt+P
-        </p>
+    <div className="space-y-6">
+      {/* Header com ícone central */}
+      <div className="flex flex-col items-center text-center space-y-4">
+        <div className={`
+          relative
+          w-32 h-32 rounded-3xl
+          transition-all duration-500 ease-out
+          ${prompt.trim() || requestId
+            ? 'bg-gradient-to-br from-primary to-primary/80 shadow-2xl shadow-primary/50' 
+            : 'bg-secondary/50 shadow-lg'
+          }
+        `}>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Zap 
+              className={`
+                transition-all duration-500
+                ${prompt.trim() || requestId
+                  ? 'w-16 h-16 text-white' 
+                  : 'w-12 h-12 text-muted-foreground'
+                }
+              `}
+              strokeWidth={1.5}
+            />
+          </div>
+          
+          {loading && (
+            <div className="absolute inset-0 rounded-3xl bg-primary animate-ping opacity-20" />
+          )}
+        </div>
+        
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-foreground">
+            Pulso CSA
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Atalho: Alt+P
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-3">
+      {/* Área de input */}
+      <div className="bg-card border border-border rounded-2xl p-6 space-y-4 shadow-lg">
         <Textarea
           id="prompt-input"
           placeholder="Ex.: 'Gerar blueprint de pastas e endpoints para um sistema de gestão de pedidos...'"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="min-h-[120px] resize-none"
+          className="min-h-[120px] resize-none border-0 focus-visible:ring-0 bg-transparent text-base"
         />
 
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button 
             onClick={handleSubmit} 
             disabled={!prompt.trim() || loading}
-            className="flex-1"
+            className="flex-1 h-12 text-base font-medium"
           >
             {loading ? "Enviando..." : (
               <>
-                <Send className="mr-2 h-4 w-4" />
+                <Send className="mr-2 h-5 w-5" />
                 Enviar Prompt
               </>
             )}
@@ -147,59 +178,61 @@ const PromptPanel = () => {
             variant="outline" 
             onClick={handleClear}
             disabled={!prompt && !requestId}
+            className="h-12 px-6"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-5 w-5" />
           </Button>
         </div>
 
         {requestId && (
-          <div className="flex items-center gap-2 p-3 bg-secondary rounded-md">
+          <div className="flex items-center gap-2 p-4 bg-primary/10 border border-primary/20 rounded-xl">
             <span className="text-sm font-mono text-foreground flex-1">
               ID: {requestId}
             </span>
-            <Button variant="ghost" size="icon" onClick={handleCopyId}>
+            <Button variant="ghost" size="icon" onClick={handleCopyId} className="h-8 w-8">
               <Copy className="h-4 w-4" />
             </Button>
           </div>
         )}
       </div>
 
+      {/* Estrutura de arquivos */}
       {fileStructure && (
-        <div className="border border-border rounded-lg p-4 bg-card">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-foreground">
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-semibold text-foreground">
               Estrutura de Arquivos Gerada
             </h3>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground font-mono">
               {requestId}
             </span>
           </div>
-          <div className="bg-secondary/30 rounded-md p-3 max-h-96 overflow-y-auto">
+          <div className="bg-secondary/30 rounded-xl p-4 max-h-96 overflow-y-auto">
             <FileTree structure={fileStructure} />
           </div>
         </div>
       )}
 
-
+      {/* Histórico */}
       {history.length > 0 && (
-        <div className="border-t border-border pt-4">
-          <h3 className="text-sm font-medium text-foreground mb-3">
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-lg">
+          <h3 className="text-base font-semibold text-foreground mb-4">
             Histórico recente
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {history.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleReusePrompt(item.text)}
-                className="w-full text-left p-3 rounded-md bg-secondary hover:bg-secondary/80 transition-colors group"
+                className="w-full text-left p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-all duration-200 hover:shadow-md group"
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm text-foreground line-clamp-2 flex-1">
                     {item.text}
                   </p>
-                  <Clock className="h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5" />
+                  <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                 </div>
-                <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center justify-between mt-3">
                   <span className="text-xs text-muted-foreground">
                     {item.timestamp.toLocaleString('pt-BR', {
                       day: '2-digit',
@@ -219,8 +252,8 @@ const PromptPanel = () => {
       )}
 
       {!prompt && !requestId && history.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-sm text-muted-foreground">
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
             Descreva sua solicitação para começarmos
           </p>
         </div>
