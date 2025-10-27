@@ -1,4 +1,4 @@
-import { Activity, Database, Check } from "lucide-react";
+import { Activity, Database } from "lucide-react";
 
 interface LayerSelectionProps {
   activeLayers: {
@@ -10,154 +10,134 @@ interface LayerSelectionProps {
 
 const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-foreground">
-          Escolha suas Camadas
+        <h2 className="text-2xl font-bold text-foreground">
+          Camadas Disponíveis
         </h2>
-        <p className="text-muted-foreground">
-          Clique nos cards para ativar as camadas de análise
+        <p className="text-sm text-muted-foreground">
+          Toque nos ícones para ativar/desativar
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
         {/* Camada 5 - FinOps */}
-        <button
-          onClick={() => setActiveLayers({ ...activeLayers, finops: !activeLayers.finops })}
-          className={`
-            group relative overflow-hidden text-left
-            rounded-2xl border-2 transition-all duration-300 transform
-            ${activeLayers.finops 
-              ? 'border-finops bg-gradient-to-br from-finops/10 to-finops/5 shadow-2xl shadow-finops/30 scale-[1.02]' 
-              : 'border-border bg-card hover:border-finops/30 hover:shadow-lg hover:scale-[1.01]'
-            }
-          `}
-        >
-          <div className="p-8 space-y-6">
-            {/* Header com ícone e badge de status */}
-            <div className="flex items-start justify-between">
-              <div className={`
-                p-4 rounded-2xl transition-all duration-300
-                ${activeLayers.finops 
-                  ? 'bg-finops/20 shadow-lg shadow-finops/20' 
-                  : 'bg-secondary group-hover:bg-finops/10'
-                }
-              `}>
-                <Activity className={`h-10 w-10 transition-colors ${
-                  activeLayers.finops ? 'text-finops' : 'text-muted-foreground group-hover:text-finops/70'
-                }`} />
-              </div>
-              
-              <div className={`
-                flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300
-                ${activeLayers.finops 
-                  ? 'bg-finops text-white scale-100' 
-                  : 'bg-secondary scale-0 group-hover:scale-100'
-                }
-              `}>
-                <Check className="h-6 w-6" />
-              </div>
+        <div className="flex flex-col items-center text-center space-y-4">
+          <button
+            onClick={() => setActiveLayers({ ...activeLayers, finops: !activeLayers.finops })}
+            className={`
+              group relative
+              w-40 h-40 rounded-3xl
+              transition-all duration-500 ease-out
+              ${activeLayers.finops 
+                ? 'bg-gradient-to-br from-finops to-finops/80 shadow-2xl shadow-finops/50 scale-100' 
+                : 'bg-secondary/50 hover:bg-secondary shadow-lg hover:shadow-xl hover:scale-105'
+              }
+            `}
+            aria-label="Toggle Camada 5 - FinOps"
+          >
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Activity 
+                className={`
+                  transition-all duration-500
+                  ${activeLayers.finops 
+                    ? 'w-20 h-20 text-white' 
+                    : 'w-16 h-16 text-muted-foreground group-hover:text-foreground group-hover:w-20 group-hover:h-20'
+                  }
+                `}
+                strokeWidth={1.5}
+              />
             </div>
             
-            {/* Conteúdo */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <span className={`
-                  px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                  ${activeLayers.finops 
-                    ? 'bg-finops text-white' 
-                    : 'bg-secondary text-muted-foreground'
-                  }
-                `}>
-                  Camada 5
-                </span>
-              </div>
-              
-              <h3 className="text-2xl font-bold text-foreground">
-                Produção/FinOps
-              </h3>
-              
-              <p className="text-muted-foreground leading-relaxed">
-                Insights de custo e otimizações em linguagem natural. Analise gastos, identifique oportunidades de economia e tome decisões financeiras inteligentes.
-              </p>
-            </div>
-          </div>
+            {/* Pulse animation quando ativo */}
+            {activeLayers.finops && (
+              <div className="absolute inset-0 rounded-3xl bg-finops animate-ping opacity-20" />
+            )}
+          </button>
           
-          {/* Barra inferior de destaque */}
-          <div className={`
-            h-2 w-full transition-all duration-300
-            ${activeLayers.finops ? 'bg-finops' : 'bg-transparent group-hover:bg-finops/30'}
-          `} />
-        </button>
+          <div className="space-y-2">
+            <div className={`
+              inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
+              transition-all duration-300
+              ${activeLayers.finops 
+                ? 'bg-finops/20 text-finops border-2 border-finops' 
+                : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
+              }
+            `}>
+              Camada 5
+            </div>
+            
+            <h3 className={`
+              text-xl font-bold transition-colors duration-300
+              ${activeLayers.finops ? 'text-finops' : 'text-foreground'}
+            `}>
+              Produção/FinOps
+            </h3>
+            
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Insights de custo e otimizações em linguagem natural
+            </p>
+          </div>
+        </div>
 
         {/* Camada 6 - Dados & IA */}
-        <button
-          onClick={() => setActiveLayers({ ...activeLayers, data: !activeLayers.data })}
-          className={`
-            group relative overflow-hidden text-left
-            rounded-2xl border-2 transition-all duration-300 transform
-            ${activeLayers.data 
-              ? 'border-dataAi bg-gradient-to-br from-dataAi/10 to-dataAi/5 shadow-2xl shadow-dataAi/30 scale-[1.02]' 
-              : 'border-border bg-card hover:border-dataAi/30 hover:shadow-lg hover:scale-[1.01]'
-            }
-          `}
-        >
-          <div className="p-8 space-y-6">
-            {/* Header com ícone e badge de status */}
-            <div className="flex items-start justify-between">
-              <div className={`
-                p-4 rounded-2xl transition-all duration-300
-                ${activeLayers.data 
-                  ? 'bg-dataAi/20 shadow-lg shadow-dataAi/20' 
-                  : 'bg-secondary group-hover:bg-dataAi/10'
-                }
-              `}>
-                <Database className={`h-10 w-10 transition-colors ${
-                  activeLayers.data ? 'text-dataAi' : 'text-muted-foreground group-hover:text-dataAi/70'
-                }`} />
-              </div>
-              
-              <div className={`
-                flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300
-                ${activeLayers.data 
-                  ? 'bg-dataAi text-white scale-100' 
-                  : 'bg-secondary scale-0 group-hover:scale-100'
-                }
-              `}>
-                <Check className="h-6 w-6" />
-              </div>
+        <div className="flex flex-col items-center text-center space-y-4">
+          <button
+            onClick={() => setActiveLayers({ ...activeLayers, data: !activeLayers.data })}
+            className={`
+              group relative
+              w-40 h-40 rounded-3xl
+              transition-all duration-500 ease-out
+              ${activeLayers.data 
+                ? 'bg-gradient-to-br from-dataAi to-dataAi/80 shadow-2xl shadow-dataAi/50 scale-100' 
+                : 'bg-secondary/50 hover:bg-secondary shadow-lg hover:shadow-xl hover:scale-105'
+              }
+            `}
+            aria-label="Toggle Camada 6 - Dados & IA"
+          >
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Database 
+                className={`
+                  transition-all duration-500
+                  ${activeLayers.data 
+                    ? 'w-20 h-20 text-white' 
+                    : 'w-16 h-16 text-muted-foreground group-hover:text-foreground group-hover:w-20 group-hover:h-20'
+                  }
+                `}
+                strokeWidth={1.5}
+              />
             </div>
             
-            {/* Conteúdo */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <span className={`
-                  px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                  ${activeLayers.data 
-                    ? 'bg-dataAi text-white' 
-                    : 'bg-secondary text-muted-foreground'
-                  }
-                `}>
-                  Camada 6
-                </span>
-              </div>
-              
-              <h3 className="text-2xl font-bold text-foreground">
-                Dados & IA
-              </h3>
-              
-              <p className="text-muted-foreground leading-relaxed">
-                Explore estrutura, estatísticas e modelos de inteligência artificial. Descubra padrões, gere insights e potencialize suas decisões com IA.
-              </p>
-            </div>
-          </div>
+            {/* Pulse animation quando ativo */}
+            {activeLayers.data && (
+              <div className="absolute inset-0 rounded-3xl bg-dataAi animate-ping opacity-20" />
+            )}
+          </button>
           
-          {/* Barra inferior de destaque */}
-          <div className={`
-            h-2 w-full transition-all duration-300
-            ${activeLayers.data ? 'bg-dataAi' : 'bg-transparent group-hover:bg-dataAi/30'}
-          `} />
-        </button>
+          <div className="space-y-2">
+            <div className={`
+              inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
+              transition-all duration-300
+              ${activeLayers.data 
+                ? 'bg-dataAi/20 text-dataAi border-2 border-dataAi' 
+                : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
+              }
+            `}>
+              Camada 6
+            </div>
+            
+            <h3 className={`
+              text-xl font-bold transition-colors duration-300
+              ${activeLayers.data ? 'text-dataAi' : 'text-foreground'}
+            `}>
+              Dados & IA
+            </h3>
+            
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Explore estrutura, estatísticas e modelos de IA
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
