@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, Activity, Database } from "lucide-react";
+import { User, Activity, Database, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import PromptPanel from "@/components/dashboard/PromptPanel";
@@ -10,6 +10,7 @@ import DataChat from "@/components/dashboard/DataChat";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeLayers, setActiveLayers] = useState({
+    pulso: false,
     finops: false,
     data: false,
   });
@@ -48,11 +49,8 @@ const Dashboard = () => {
       
       <main className="flex-1 container mx-auto p-4 lg:p-6">
         <div className="flex flex-col gap-6">
-          {/* Painel de Prompt + Preview */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <PromptPanel />
-            
-            {/* Preview Iframe */}
+          {/* Preview Iframe */}
+          <div className="grid grid-cols-1 gap-6">
             <div className="bg-card border border-border rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-foreground">
@@ -184,10 +182,11 @@ const Dashboard = () => {
 
           {/* Área de Chats */}
           <div className="flex-1 space-y-6">
-            {!activeLayers.finops && !activeLayers.data && (
+            {!activeLayers.pulso && !activeLayers.finops && !activeLayers.data && (
               <div className="bg-card border border-border rounded-lg p-8 text-center">
                 <div className="max-w-md mx-auto space-y-4">
                   <div className="flex justify-center gap-4">
+                    <Zap className="h-12 w-12 text-muted-foreground" />
                     <Activity className="h-12 w-12 text-muted-foreground" />
                     <Database className="h-12 w-12 text-muted-foreground" />
                   </div>
@@ -195,12 +194,13 @@ const Dashboard = () => {
                     Ative uma camada para começar
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Selecione Camada 5 (FinOps) ou Camada 6 (Dados & IA) para iniciar uma conversa
+                    Selecione Pulso CSA, Camada 5 (FinOps) ou Camada 6 (Dados & IA) para iniciar
                   </p>
                 </div>
               </div>
             )}
 
+            {activeLayers.pulso && <PromptPanel />}
             {activeLayers.finops && <FinOpsChat />}
             {activeLayers.data && <DataChat />}
           </div>

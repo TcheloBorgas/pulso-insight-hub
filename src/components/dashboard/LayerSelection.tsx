@@ -1,11 +1,12 @@
-import { Activity, Database } from "lucide-react";
+import { Zap, Activity, Database } from "lucide-react";
 
 interface LayerSelectionProps {
   activeLayers: {
+    pulso: boolean;
     finops: boolean;
     data: boolean;
   };
-  setActiveLayers: (layers: { finops: boolean; data: boolean }) => void;
+  setActiveLayers: (layers: { pulso: boolean; finops: boolean; data: boolean }) => void;
 }
 
 const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) => {
@@ -20,7 +21,66 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+        {/* Pulso CSA */}
+        <div className="flex flex-col items-center text-center space-y-4">
+          <button
+            onClick={() => setActiveLayers({ ...activeLayers, pulso: !activeLayers.pulso })}
+            className={`
+              group relative
+              w-40 h-40 rounded-3xl
+              transition-all duration-500 ease-out
+              ${activeLayers.pulso 
+                ? 'bg-gradient-to-br from-primary to-primary/80 shadow-2xl shadow-primary/50 scale-100' 
+                : 'bg-secondary/50 hover:bg-secondary shadow-lg hover:shadow-xl hover:scale-105'
+              }
+            `}
+            aria-label="Toggle Pulso CSA"
+          >
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Zap 
+                className={`
+                  transition-all duration-500
+                  ${activeLayers.pulso 
+                    ? 'w-20 h-20 text-white' 
+                    : 'w-16 h-16 text-muted-foreground group-hover:text-foreground group-hover:w-20 group-hover:h-20'
+                  }
+                `}
+                strokeWidth={1.5}
+              />
+            </div>
+            
+            {/* Pulse animation quando ativo */}
+            {activeLayers.pulso && (
+              <div className="absolute inset-0 rounded-3xl bg-primary animate-ping opacity-20" />
+            )}
+          </button>
+          
+          <div className="space-y-2">
+            <div className={`
+              inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
+              transition-all duration-300
+              ${activeLayers.pulso 
+                ? 'bg-primary/20 text-primary border-2 border-primary' 
+                : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
+              }
+            `}>
+              Pulso CSA
+            </div>
+            
+            <h3 className={`
+              text-xl font-bold transition-colors duration-300
+              ${activeLayers.pulso ? 'text-primary' : 'text-foreground'}
+            `}>
+              Blueprint & Estrutura
+            </h3>
+            
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Gerar estrutura de pastas e endpoints
+            </p>
+          </div>
+        </div>
+
         {/* Camada 5 - FinOps */}
         <div className="flex flex-col items-center text-center space-y-4">
           <button

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, Trash2, Copy, Clock, Zap } from "lucide-react";
+import { Send, Trash2, Copy, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -112,45 +112,6 @@ const PromptPanel = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header com ícone central */}
-      <div className="flex flex-col items-center text-center space-y-4">
-        <div className={`
-          relative
-          w-32 h-32 rounded-3xl
-          transition-all duration-500 ease-out
-          ${prompt.trim() || requestId
-            ? 'bg-gradient-to-br from-primary to-primary/80 shadow-2xl shadow-primary/50' 
-            : 'bg-secondary/50 shadow-lg'
-          }
-        `}>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Zap 
-              className={`
-                transition-all duration-500
-                ${prompt.trim() || requestId
-                  ? 'w-16 h-16 text-white' 
-                  : 'w-12 h-12 text-muted-foreground'
-                }
-              `}
-              strokeWidth={1.5}
-            />
-          </div>
-          
-          {loading && (
-            <div className="absolute inset-0 rounded-3xl bg-primary animate-ping opacity-20" />
-          )}
-        </div>
-        
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-foreground">
-            Pulso CSA
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Atalho: Alt+P
-          </p>
-        </div>
-      </div>
-
       {/* Área de input */}
       <div className="bg-card border border-border rounded-2xl p-6 space-y-4 shadow-lg">
         <Textarea
