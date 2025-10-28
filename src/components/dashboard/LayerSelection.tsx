@@ -1,4 +1,4 @@
-import { Zap, Activity, Database, Monitor } from "lucide-react";
+import { Zap, Activity, Database } from "lucide-react";
 
 interface LayerSelectionProps {
   activeLayers: {
@@ -22,66 +22,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 max-w-7xl mx-auto">
-        {/* Preview do Frontend */}
-        <div className="flex flex-col items-center text-center space-y-4">
-          <button
-            onClick={() => setActiveLayers({ ...activeLayers, preview: !activeLayers.preview })}
-            className={`
-              group relative
-              w-40 h-40 rounded-3xl
-              transition-all duration-500 ease-out
-              ${activeLayers.preview 
-                ? 'bg-gradient-to-br from-purple-500 to-purple-500/80 shadow-2xl shadow-purple-500/50 scale-100' 
-                : 'bg-secondary/50 hover:bg-secondary shadow-lg hover:shadow-xl hover:scale-105'
-              }
-            `}
-            aria-label="Toggle Preview do Frontend"
-          >
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Monitor 
-                className={`
-                  transition-all duration-500
-                  ${activeLayers.preview 
-                    ? 'w-20 h-20 text-white' 
-                    : 'w-16 h-16 text-muted-foreground group-hover:text-foreground group-hover:w-20 group-hover:h-20'
-                  }
-                `}
-                strokeWidth={1.5}
-              />
-            </div>
-            
-            {/* Pulse animation quando ativo */}
-            {activeLayers.preview && (
-              <div className="absolute inset-0 rounded-3xl bg-purple-500 animate-ping opacity-20" />
-            )}
-          </button>
-          
-          <div className="space-y-2">
-            <div className={`
-              inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
-              transition-all duration-300
-              ${activeLayers.preview 
-                ? 'bg-purple-500/20 text-purple-500 border-2 border-purple-500' 
-                : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
-              }
-            `}>
-              Preview
-            </div>
-            
-            <h3 className={`
-              text-xl font-bold transition-colors duration-300
-              ${activeLayers.preview ? 'text-purple-500' : 'text-foreground'}
-            `}>
-              Frontend
-            </h3>
-            
-            <p className="text-sm text-muted-foreground max-w-xs">
-              Visualize o preview da aplicação
-            </p>
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-7xl mx-auto">
         {/* Pulso CSA */}
         <div className="flex flex-col items-center text-center space-y-4">
           <button
