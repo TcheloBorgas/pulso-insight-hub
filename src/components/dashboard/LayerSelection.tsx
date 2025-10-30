@@ -14,7 +14,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-primary neon-glow">
+        <h2 className="text-2xl font-bold neon-text" style={{ color: 'hsl(180 100% 70%)' }}>
           Camadas Disponíveis
         </h2>
         <p className="text-sm text-foreground/80">

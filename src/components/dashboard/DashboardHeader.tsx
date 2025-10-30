@@ -26,7 +26,7 @@ const DashboardHeader = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-primary/30 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
-        <h1 className="text-xl font-bold text-primary neon-glow">Pulso Tech</h1>
+        <h1 className="text-xl font-bold neon-text" style={{ color: 'hsl(180 100% 65%)' }}>Pulso Tech</h1>
         
         <div className="flex items-center gap-2">
           <ThemeToggle />
