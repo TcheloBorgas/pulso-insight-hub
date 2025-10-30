@@ -1,4 +1,4 @@
-import { Zap, Activity, Database } from "lucide-react";
+import { Zap, Activity, BarChart3 } from "lucide-react";
 
 interface LayerSelectionProps {
   activeLayers: {
@@ -62,10 +62,11 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
               transition-all duration-300
               ${activeLayers.pulso 
-                ? 'bg-primary/20 text-primary border-2 border-primary' 
+                ? 'bg-primary/20 border-2 border-primary' 
                 : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
               }
-            `}>
+            `}
+            style={activeLayers.pulso ? { color: 'hsl(180 100% 65%)' } : {}}>
               Pulso CSA
             </div>
             
@@ -121,18 +122,19 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
               transition-all duration-300
               ${activeLayers.finops 
-                ? 'bg-finops/20 text-finops border-2 border-finops' 
+                ? 'bg-finops/20 border-2 border-finops' 
                 : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
               }
-            `}>
-              Camada 5
+            `}
+            style={activeLayers.finops ? { color: 'hsl(150 100% 65%)' } : {}}>
+              FinOps
             </div>
             
             <h3 className={`
               text-xl font-bold transition-colors duration-300
               ${activeLayers.finops ? 'text-finops' : 'text-foreground'}
             `}>
-              Produção/FinOps
+              Otimização de Custos
             </h3>
             
             <p className="text-sm text-muted-foreground max-w-xs">
@@ -157,7 +159,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
             aria-label="Toggle Camada 6 - Dados & IA"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <Database 
+              <BarChart3 
                 className={`
                   transition-all duration-500
                   ${activeLayers.data 
@@ -180,18 +182,19 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
               transition-all duration-300
               ${activeLayers.data 
-                ? 'bg-dataAi/20 text-dataAi border-2 border-dataAi' 
+                ? 'bg-dataAi/20 border-2 border-dataAi' 
                 : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
               }
-            `}>
-              Camada 6
+            `}
+            style={activeLayers.data ? { color: 'hsl(270 100% 80%)' } : {}}>
+              Analytics
             </div>
             
             <h3 className={`
               text-xl font-bold transition-colors duration-300
               ${activeLayers.data ? 'text-dataAi' : 'text-foreground'}
             `}>
-              Dados & IA
+              Inteligência de Dados
             </h3>
             
             <p className="text-sm text-muted-foreground max-w-xs">
