@@ -73,8 +73,8 @@ const FinOpsChat = () => {
     <div className="glass-strong neon-glow rounded-lg overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-primary/30">
-        <h2 className="text-lg font-semibold text-finops neon-glow flex items-center gap-2">
-          <DollarSign className="h-5 w-5 text-finops neon-glow" />
+        <h2 className="text-lg font-semibold neon-text flex items-center gap-2" style={{ color: 'hsl(150 100% 65%)' }}>
+          <DollarSign className="h-5 w-5" style={{ color: 'hsl(150 100% 65%)' }} />
           FinOps Inteligente
         </h2>
         <p className="text-sm text-muted-foreground mt-1">

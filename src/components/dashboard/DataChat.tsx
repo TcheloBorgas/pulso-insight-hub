@@ -147,8 +147,8 @@ const DataChat = () => {
       <div className="p-4 border-b border-primary/30">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-dataAi neon-glow flex items-center gap-2">
-              <Database className="h-5 w-5 text-dataAi neon-glow" />
+            <h2 className="text-lg font-semibold neon-text flex items-center gap-2" style={{ color: 'hsl(270 100% 80%)' }}>
+              <Database className="h-5 w-5" style={{ color: 'hsl(270 100% 80%)' }} />
               Inteligência de Dados
             </h2>
             <p className="text-sm text-muted-foreground mt-1">

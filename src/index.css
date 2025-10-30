@@ -25,7 +25,7 @@ All colors MUST be HSL.
     --primary-light: 180 100% 85%;
 
     /* Neutros com glassmorphism */
-    --secondary: 270 90% 70%; /* Brighter purple neon */
+    --secondary: 300 100% 70%; /* Bright magenta neon */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 230 35% 18%;
@@ -83,7 +83,7 @@ All colors MUST be HSL.
     --primary-light: 180 100% 90%;
 
     /* Neutros Dark Neon */
-    --secondary: 270 95% 75%; /* Ultra bright purple neon */
+    --secondary: 300 100% 75%; /* Ultra bright magenta neon */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 230 40% 14%;
