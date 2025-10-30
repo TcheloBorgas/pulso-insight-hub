@@ -47,7 +47,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <DashboardHeader />
+      <div className="glass-strong border-b">
+        <DashboardHeader />
+      </div>
       
       <main className="flex-1 container mx-auto p-4 lg:p-6">
         <div className="flex flex-col gap-6">
@@ -61,14 +63,14 @@ const Dashboard = () => {
 
           {/* Área de Chats */}
           <div className="flex-1 space-y-6">
-            {!activeLayers.preview && !activeLayers.pulso && !activeLayers.finops && !activeLayers.data && (
-              <div className="bg-card border border-border rounded-lg p-8 text-center">
+          {!activeLayers.preview && !activeLayers.pulso && !activeLayers.finops && !activeLayers.data && (
+              <div className="glass neon-glow rounded-lg p-8 text-center">
                 <div className="max-w-md mx-auto space-y-4">
                   <div className="flex justify-center gap-4">
-                    <Monitor className="h-12 w-12 text-muted-foreground" />
-                    <Zap className="h-12 w-12 text-muted-foreground" />
-                    <Activity className="h-12 w-12 text-muted-foreground" />
-                    <Database className="h-12 w-12 text-muted-foreground" />
+                    <Monitor className="h-12 w-12 text-primary neon-glow" />
+                    <Zap className="h-12 w-12 text-secondary neon-glow" />
+                    <Activity className="h-12 w-12 text-finops neon-glow" />
+                    <Database className="h-12 w-12 text-data-ai neon-glow" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground">
                     Ative uma camada para começar
@@ -95,16 +97,16 @@ const Dashboard = () => {
                 </div>
                 
                 {activeLayers.preview && (
-                  <div className="bg-card border border-border rounded-lg p-4">
+                  <div className="glass-strong neon-glow rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-foreground">
+                      <h3 className="text-sm font-semibold text-primary neon-glow">
                         Preview do Frontend
                       </h3>
-                      <span className="text-xs text-muted-foreground font-mono">
+                      <span className="text-xs text-primary/70 font-mono">
                         localhost:3000
                       </span>
                     </div>
-                    <div className="bg-background border border-border rounded-md overflow-hidden" style={{ height: '600px' }}>
+                    <div className="glass rounded-md overflow-hidden border border-primary/30" style={{ height: '600px' }}>
                       <iframe
                         srcDoc={`
                           <!DOCTYPE html>

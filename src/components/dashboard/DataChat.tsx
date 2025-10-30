@@ -142,13 +142,13 @@ const DataChat = () => {
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg overflow-hidden">
+    <div className="glass-strong neon-glow rounded-lg overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-primary/30">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <Database className="h-5 w-5 text-dataAi" />
+            <h2 className="text-lg font-semibold text-dataAi neon-glow flex items-center gap-2">
+              <Database className="h-5 w-5 text-dataAi neon-glow" />
               Inteligência de Dados
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
@@ -168,7 +168,7 @@ const DataChat = () => {
 
       {/* Connection Drawer */}
       {showConnection && (
-        <div className="p-4 bg-secondary/30 border-b border-border space-y-3">
+        <div className="p-4 glass border-b border-primary/30 space-y-3">
           <h3 className="text-sm font-medium text-foreground">Conexão de Dados (Opcional)</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

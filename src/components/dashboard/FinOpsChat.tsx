@@ -70,11 +70,11 @@ const FinOpsChat = () => {
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg overflow-hidden">
+    <div className="glass-strong neon-glow rounded-lg overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-border">
-        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <DollarSign className="h-5 w-5 text-finops" />
+      <div className="p-4 border-b border-primary/30">
+        <h2 className="text-lg font-semibold text-finops neon-glow flex items-center gap-2">
+          <DollarSign className="h-5 w-5 text-finops neon-glow" />
           FinOps Inteligente
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
@@ -83,7 +83,7 @@ const FinOpsChat = () => {
       </div>
 
       {/* Cost Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-secondary/30">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 glass border-y border-primary/20">
         <div className="space-y-1">
           <p className="text-xs text-muted-foreground">Custo mensal</p>
           <p className="text-xl font-bold text-foreground">{costSummary.monthly}</p>

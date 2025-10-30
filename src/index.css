@@ -8,117 +8,117 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Paleta "Confiança Corporativa" - Light Mode */
-    --background: 220 33% 98%; /* #F8FAFC */
-    --foreground: 222 47% 11%; /* #0F172A */
+    /* Paleta Neon Glassmorphism - Light Mode */
+    --background: 230 40% 12%; /* Dark background for neon contrast */
+    --foreground: 0 0% 98%; /* Bright white text */
 
-    --card: 214 32% 95%; /* #F1F5F9 */
-    --card-foreground: 222 47% 11%;
+    --card: 230 35% 16%; /* Darker cards with transparency */
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 230 35% 16%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Primárias - Azul Profundo/Vivo */
-    --primary: 221 83% 53%; /* #2563EB */
-    --primary-foreground: 0 0% 100%;
-    --primary-deep: 221 68% 32%; /* #1E3A8A */
-    --primary-light: 213 97% 87%; /* #DBEAFE */
+    /* Primárias - Cyan Neon */
+    --primary: 180 100% 50%; /* Bright cyan #00FFFF */
+    --primary-foreground: 230 40% 12%;
+    --primary-deep: 180 100% 35%; 
+    --primary-light: 180 100% 80%;
 
-    /* Neutros */
-    --secondary: 214 32% 91%; /* #E2E8F0 */
-    --secondary-foreground: 215 20% 65%;
+    /* Neutros com glassmorphism */
+    --secondary: 270 80% 60%; /* Purple neon */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 214 32% 91%; /* #E2E8F0 */
-    --muted-foreground: 215 16% 47%; /* #64748B */
+    --muted: 230 35% 20%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 213 97% 87%; /* #DBEAFE */
-    --accent-foreground: 221 83% 53%;
+    --accent: 330 100% 60%; /* Pink neon */
+    --accent-foreground: 0 0% 100%;
 
-    /* Semânticas */
-    --success: 142 71% 45%; /* #16A34A */
-    --success-foreground: 0 0% 100%;
+    /* Semânticas Neon */
+    --success: 150 100% 50%; /* Neon green */
+    --success-foreground: 230 40% 12%;
 
-    --warning: 25 95% 53%; /* #D97706 */
-    --warning-foreground: 0 0% 100%;
+    --warning: 40 100% 55%; /* Neon yellow */
+    --warning-foreground: 230 40% 12%;
 
-    --destructive: 0 72% 51%; /* #DC2626 */
+    --destructive: 0 100% 60%; /* Neon red */
     --destructive-foreground: 0 0% 100%;
 
-    --info: 221 83% 53%; /* #2563EB */
-    --info-foreground: 0 0% 100%;
+    --info: 200 100% 55%; /* Neon blue */
+    --info-foreground: 230 40% 12%;
 
-    /* Acentos por Seção */
-    --finops: 173 80% 40%; /* #0D9488 - Verde Marinho */
-    --finops-foreground: 0 0% 100%;
+    /* Acentos por Seção - Neon */
+    --finops: 150 100% 50%; /* Neon green */
+    --finops-foreground: 230 40% 12%;
 
-    --data-ai: 258 90% 66%; /* #7C3AED - Roxo */
+    --data-ai: 270 100% 70%; /* Neon purple */
     --data-ai-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%; /* #E2E8F0 */
-    --input: 214 32% 91%;
-    --ring: 213 97% 87%;
+    --border: 180 100% 50% / 0.3; /* Neon cyan with transparency */
+    --input: 230 35% 20%;
+    --ring: 180 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    /* Chat */
-    --chat-user: 221 83% 53%;
-    --chat-system: 214 32% 95%;
+    /* Chat Neon */
+    --chat-user: 180 100% 50%;
+    --chat-system: 270 80% 60%;
   }
 
   .dark {
-    /* Paleta "Confiança Corporativa" - Dark Mode */
-    --background: 222 47% 11%; /* #0B1220 */
-    --foreground: 210 20% 98%; /* #E5E7EB */
+    /* Paleta Neon Glassmorphism - Dark Mode */
+    --background: 230 45% 8%; /* Even darker for neon contrast */
+    --foreground: 0 0% 98%;
 
-    --card: 217 33% 17%; /* #111827 */
-    --card-foreground: 210 20% 98%;
+    --card: 230 40% 12%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 217 33% 17%;
-    --popover-foreground: 210 20% 98%;
+    --popover: 230 40% 12%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Primárias - Ajustadas para dark */
-    --primary: 213 97% 67%; /* #60A5FA - Azul Claro */
-    --primary-foreground: 222 47% 11%;
-    --primary-deep: 221 83% 53%; /* #2563EB */
-    --primary-light: 221 68% 32%;
+    /* Primárias - Enhanced Cyan Neon */
+    --primary: 180 100% 55%; /* Brighter cyan */
+    --primary-foreground: 230 45% 8%;
+    --primary-deep: 180 100% 40%;
+    --primary-light: 180 100% 85%;
 
-    /* Neutros Dark */
-    --secondary: 215 25% 27%; /* #1F2937 */
-    --secondary-foreground: 210 20% 98%;
+    /* Neutros Dark Neon */
+    --secondary: 270 85% 65%; /* Brighter purple neon */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 25% 27%;
-    --muted-foreground: 215 16% 65%; /* #9CA3AF */
+    --muted: 230 40% 15%;
+    --muted-foreground: 0 0% 75%;
 
-    --accent: 215 25% 27%;
-    --accent-foreground: 213 97% 67%;
+    --accent: 330 100% 65%; /* Brighter pink neon */
+    --accent-foreground: 0 0% 100%;
 
-    /* Semânticas Dark */
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
+    /* Semânticas Neon Dark */
+    --success: 150 100% 55%; /* Brighter neon green */
+    --success-foreground: 230 45% 8%;
 
-    --warning: 25 95% 53%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 40 100% 60%; /* Brighter neon yellow */
+    --warning-foreground: 230 45% 8%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 100% 65%; /* Brighter neon red */
     --destructive-foreground: 0 0% 100%;
 
-    --info: 213 97% 67%;
-    --info-foreground: 222 47% 11%;
+    --info: 200 100% 60%; /* Brighter neon blue */
+    --info-foreground: 230 45% 8%;
 
-    /* Acentos por Seção Dark */
-    --finops: 173 80% 40%;
-    --finops-foreground: 0 0% 100%;
+    /* Acentos por Seção Dark Neon */
+    --finops: 150 100% 55%; /* Bright neon green */
+    --finops-foreground: 230 45% 8%;
 
-    --data-ai: 258 90% 66%;
+    --data-ai: 270 100% 75%; /* Bright neon purple */
     --data-ai-foreground: 0 0% 100%;
 
-    --border: 215 25% 27%;
-    --input: 215 25% 27%;
-    --ring: 213 97% 67%;
+    --border: 180 100% 55% / 0.3; /* Neon cyan with transparency */
+    --input: 230 40% 15%;
+    --ring: 180 100% 55%;
 
-    /* Chat Dark */
-    --chat-user: 213 97% 67%;
-    --chat-system: 215 25% 27%;
+    /* Chat Neon Dark */
+    --chat-user: 180 100% 55%;
+    --chat-system: 270 85% 65%;
   }
 }
 
@@ -129,5 +129,27 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-card/40 backdrop-blur-xl border border-primary/20;
+  }
+  
+  .glass-strong {
+    @apply bg-card/60 backdrop-blur-2xl border border-primary/30;
+  }
+  
+  .glass-hover {
+    @apply hover:bg-card/50 hover:border-primary/40 transition-all duration-300;
+  }
+
+  .neon-glow {
+    @apply shadow-[0_0_20px_rgba(0,255,255,0.3)];
+  }
+
+  .neon-glow-strong {
+    @apply shadow-[0_0_30px_rgba(0,255,255,0.5),0_0_60px_rgba(0,255,255,0.2)];
   }
 }

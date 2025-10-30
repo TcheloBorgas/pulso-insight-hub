@@ -14,10 +14,10 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-foreground">
+        <h2 className="text-2xl font-bold text-primary neon-glow">
           Camadas Disponíveis
         </h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-foreground/80">
           Toque nos ícones para ativar/desativar
         </p>
       </div>
@@ -32,8 +32,8 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               w-40 h-40 rounded-3xl
               transition-all duration-500 ease-out
               ${activeLayers.pulso 
-                ? 'bg-gradient-to-br from-primary to-primary/80 shadow-2xl shadow-primary/50 scale-100' 
-                : 'bg-secondary/50 hover:bg-secondary shadow-lg hover:shadow-xl hover:scale-105'
+                ? 'glass-strong neon-glow-strong bg-gradient-to-br from-primary/60 to-primary/40 scale-100' 
+                : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105'
               }
             `}
             aria-label="Toggle Pulso CSA"
@@ -91,8 +91,8 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               w-40 h-40 rounded-3xl
               transition-all duration-500 ease-out
               ${activeLayers.finops 
-                ? 'bg-gradient-to-br from-finops to-finops/80 shadow-2xl shadow-finops/50 scale-100' 
-                : 'bg-secondary/50 hover:bg-secondary shadow-lg hover:shadow-xl hover:scale-105'
+                ? 'glass-strong neon-glow-strong bg-gradient-to-br from-finops/60 to-finops/40 scale-100' 
+                : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105'
               }
             `}
             aria-label="Toggle Camada 5 - FinOps"
@@ -150,8 +150,8 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               w-40 h-40 rounded-3xl
               transition-all duration-500 ease-out
               ${activeLayers.data 
-                ? 'bg-gradient-to-br from-dataAi to-dataAi/80 shadow-2xl shadow-dataAi/50 scale-100' 
-                : 'bg-secondary/50 hover:bg-secondary shadow-lg hover:shadow-xl hover:scale-105'
+                ? 'glass-strong neon-glow-strong bg-gradient-to-br from-dataAi/60 to-dataAi/40 scale-100' 
+                : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105'
               }
             `}
             aria-label="Toggle Camada 6 - Dados & IA"

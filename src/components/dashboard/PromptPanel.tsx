@@ -113,7 +113,7 @@ const PromptPanel = () => {
   return (
     <div className="space-y-6">
       {/* Área de input */}
-      <div className="bg-card border border-border rounded-2xl p-6 space-y-4 shadow-lg">
+      <div className="glass-strong neon-glow rounded-2xl p-6 space-y-4">
         <Textarea
           id="prompt-input"
           placeholder="Ex.: 'Gerar blueprint de pastas e endpoints para um sistema de gestão de pedidos...'"
@@ -146,8 +146,8 @@ const PromptPanel = () => {
         </div>
 
         {requestId && (
-          <div className="flex items-center gap-2 p-4 bg-primary/10 border border-primary/20 rounded-xl">
-            <span className="text-sm font-mono text-foreground flex-1">
+          <div className="flex items-center gap-2 p-4 glass border border-primary/30 rounded-xl neon-glow">
+            <span className="text-sm font-mono text-primary flex-1">
               ID: {requestId}
             </span>
             <Button variant="ghost" size="icon" onClick={handleCopyId} className="h-8 w-8">
@@ -159,9 +159,9 @@ const PromptPanel = () => {
 
       {/* Estrutura de arquivos */}
       {fileStructure && (
-        <div className="bg-card border border-border rounded-2xl p-6 shadow-lg">
+        <div className="glass-strong neon-glow rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-semibold text-foreground">
+            <h3 className="text-base font-semibold text-primary neon-glow">
               Estrutura de Arquivos Gerada
             </h3>
             <span className="text-xs text-muted-foreground font-mono">
@@ -176,8 +176,8 @@ const PromptPanel = () => {
 
       {/* Histórico */}
       {history.length > 0 && (
-        <div className="bg-card border border-border rounded-2xl p-6 shadow-lg">
-          <h3 className="text-base font-semibold text-foreground mb-4">
+        <div className="glass-strong neon-glow rounded-2xl p-6">
+          <h3 className="text-base font-semibold text-primary neon-glow mb-4">
             Histórico recente
           </h3>
           <div className="space-y-3">
