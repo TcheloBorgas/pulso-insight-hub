@@ -58,15 +58,8 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
           </button>
           
           <div className="space-y-2">
-            <div className={`
-              inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
-              transition-all duration-300
-              ${activeLayers.pulso 
-                ? 'bg-primary/20 border-2 border-primary' 
-                : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
-              }
-            `}
-            style={activeLayers.pulso ? { color: 'hsl(180 100% 65%)' } : {}}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-primary/20 border-2 border-primary"
+              style={{ color: 'hsl(180 100% 65%)' }}>
               Pulso CSA
             </div>
             
@@ -118,15 +111,8 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
           </button>
           
           <div className="space-y-2">
-            <div className={`
-              inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
-              transition-all duration-300
-              ${activeLayers.finops 
-                ? 'bg-finops/20 border-2 border-finops' 
-                : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
-              }
-            `}
-            style={activeLayers.finops ? { color: 'hsl(150 100% 65%)' } : {}}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-finops/20 border-2 border-finops"
+              style={{ color: 'hsl(150 100% 65%)' }}>
               FinOps
             </div>
             
@@ -178,15 +164,8 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
           </button>
           
           <div className="space-y-2">
-            <div className={`
-              inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider
-              transition-all duration-300
-              ${activeLayers.data 
-                ? 'bg-dataAi/20 border-2 border-dataAi' 
-                : 'bg-secondary/50 text-muted-foreground border-2 border-transparent'
-              }
-            `}
-            style={activeLayers.data ? { color: 'hsl(270 100% 80%)' } : {}}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-dataAi/20 border-2 border-dataAi"
+              style={{ color: 'hsl(270 100% 80%)' }}>
               Analytics
             </div>
             
