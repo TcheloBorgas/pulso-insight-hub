@@ -1,4 +1,4 @@
-import { LogOut, User, UserCircle } from "lucide-react";
+import { LogOut, User, UserCircle, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +26,16 @@ const DashboardHeader = () => {
     navigate("/auth");
   };
 
+  const handleSwitchAccount = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("userProfile");
+    toast({
+      title: "Trocar de conta",
+      description: "Faça login com outra conta",
+    });
+    navigate("/auth");
+  };
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-primary/30 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -43,6 +53,10 @@ const DashboardHeader = () => {
                 <DropdownMenuItem onClick={() => setProfileOpen(true)}>
                   <UserCircle className="mr-2 h-4 w-4" />
                   Perfil
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSwitchAccount}>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Trocar de conta
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
