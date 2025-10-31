@@ -138,186 +138,205 @@ const ProfileDialog = ({ open, onOpenChange }: ProfileDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="text-xl neon-text" style={{ color: 'hsl(180 100% 65%)' }}>
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="space-y-3 pb-4">
+          <DialogTitle className="text-2xl font-bold neon-text flex items-center gap-2" style={{ color: 'hsl(180 100% 65%)' }}>
+            <User className="h-6 w-6" />
             Perfil do Usuário
           </DialogTitle>
-          <DialogDescription>
-            Atualize suas informações pessoais
+          <DialogDescription className="text-base">
+            Gerencie suas informações pessoais e configurações de segurança
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-6 mt-2">
           {/* Avatar Section */}
-          <div className="flex flex-col items-center gap-4">
-            <Avatar className="h-24 w-24 border-2 border-primary">
-              <AvatarImage src={formData.avatarUrl} alt={formData.name} />
-              <AvatarFallback className="bg-primary/20 text-primary text-2xl">
-                {getInitials()}
-              </AvatarFallback>
-            </Avatar>
-            
-            <div className="flex items-center gap-2">
-              <input
-                type="file"
-                id="avatar-upload"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => document.getElementById("avatar-upload")?.click()}
-                className="gap-2"
-              >
-                <Camera className="h-4 w-4" />
-                Alterar Foto
-              </Button>
-              {formData.avatarUrl && (
+          <div className="glass-strong rounded-lg p-6 space-y-4 border border-primary/20">
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative group">
+                <Avatar className="h-28 w-28 border-4 border-primary/50 neon-glow transition-all duration-300 group-hover:border-primary group-hover:scale-105">
+                  <AvatarImage src={formData.avatarUrl} alt={formData.name} />
+                  <AvatarFallback className="bg-primary/20 text-primary text-3xl font-bold">
+                    {getInitials()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 rounded-full bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="hidden"
+                />
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  onClick={() => setFormData({ ...formData, avatarUrl: "" })}
+                  onClick={() => document.getElementById("avatar-upload")?.click()}
+                  className="gap-2 border-primary/30 hover:border-primary hover:bg-primary/10 transition-all duration-300"
                 >
-                  Remover
+                  <Camera className="h-4 w-4" />
+                  Alterar Foto
                 </Button>
-              )}
+                {formData.avatarUrl && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFormData({ ...formData, avatarUrl: "" })}
+                    className="hover:text-destructive transition-colors"
+                  >
+                    Remover
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Name Field */}
-          <div className="space-y-2">
-            <Label htmlFor="name" className="flex items-center gap-2">
+          {/* Personal Info Section */}
+          <div className="glass rounded-lg p-5 space-y-4 border border-primary/10">
+            <h3 className="text-sm font-semibold text-primary flex items-center gap-2">
               <User className="h-4 w-4" />
-              Nome
-            </Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Seu nome completo"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-          </div>
+              Informações Pessoais
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm font-medium">
+                  Nome Completo
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Seu nome completo"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  className="border-primary/20 focus:border-primary transition-colors"
+                />
+              </div>
 
-          {/* Email Field */}
-          <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              E-mail
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="seu@email.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5" />
+                  E-mail
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                  className="border-primary/20 focus:border-primary transition-colors"
+                />
+              </div>
+            </div>
           </div>
-
-          <Separator />
 
           {/* Password Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Lock className="h-4 w-4 text-muted-foreground" />
-              <h3 className="text-sm font-semibold">Alterar Senha</h3>
+          <div className="glass rounded-lg p-5 space-y-4 border border-primary/10">
+            <div className="flex items-center gap-2 pb-2">
+              <Lock className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-primary">Segurança</h3>
             </div>
-
-            {/* Current Password */}
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">Senha Atual</Label>
-              <div className="relative">
-                <Input
-                  id="currentPassword"
-                  type={showCurrentPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={formData.currentPassword}
-                  onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label={showCurrentPassword ? "Ocultar senha" : "Mostrar senha"}
-                >
-                  {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* New Password */}
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">Nova Senha</Label>
-              <div className="relative">
-                <Input
-                  id="newPassword"
-                  type={showNewPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={formData.newPassword}
-                  onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label={showNewPassword ? "Ocultar senha" : "Mostrar senha"}
-                >
-                  {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label={showConfirmPassword ? "Ocultar senha" : "Mostrar senha"}
-                >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            <p className="text-xs text-muted-foreground">
-              Deixe em branco se não deseja alterar a senha
+            
+            <p className="text-xs text-muted-foreground pb-2">
+              Preencha os campos abaixo apenas se deseja alterar sua senha
             </p>
+
+            <div className="space-y-4">
+              {/* Current Password */}
+              <div className="space-y-2">
+                <Label htmlFor="currentPassword" className="text-sm font-medium">Senha Atual</Label>
+                <div className="relative">
+                  <Input
+                    id="currentPassword"
+                    type={showCurrentPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={formData.currentPassword}
+                    onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
+                    className="border-primary/20 focus:border-primary transition-colors pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    aria-label={showCurrentPassword ? "Ocultar senha" : "Mostrar senha"}
+                  >
+                    {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div className="space-y-2">
+                <Label htmlFor="newPassword" className="text-sm font-medium">Nova Senha</Label>
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                    placeholder="Mínimo 8 caracteres"
+                    value={formData.newPassword}
+                    onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                    className="border-primary/20 focus:border-primary transition-colors pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    aria-label={showNewPassword ? "Ocultar senha" : "Mostrar senha"}
+                  >
+                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirmar Nova Senha</Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className="border-primary/20 focus:border-primary transition-colors pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    aria-label={showConfirmPassword ? "Ocultar senha" : "Mostrar senha"}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Submit Button */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-2">
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="flex-1 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all"
               onClick={() => onOpenChange(false)}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="flex-1 gap-2"
+              className="flex-1 gap-2 bg-primary hover:bg-primary/90 neon-glow transition-all duration-300 hover:scale-105"
               disabled={loading}
             >
               <Save className="h-4 w-4" />
-              {loading ? "Salvando..." : "Salvar"}
+              {loading ? "Salvando..." : "Salvar Alterações"}
             </Button>
           </div>
         </form>
