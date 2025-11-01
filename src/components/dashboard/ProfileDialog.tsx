@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, Camera, Mail, Save, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Camera, Mail, Save, Lock, Eye, EyeOff, CreditCard, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface ProfileDialogProps {
 
 const ProfileDialog = ({ open, onOpenChange }: ProfileDialogProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -234,6 +236,35 @@ const ProfileDialog = ({ open, onOpenChange }: ProfileDialogProps) => {
                   className="border-primary/20 focus:border-primary transition-colors"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Billing & Payments Section */}
+          <div className="glass-strong rounded-lg p-5 space-y-4 border-2 border-finops/30">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Crown className="h-5 w-5 text-finops drop-shadow-[0_0_10px_rgba(0,255,153,0.6)]" />
+                <div>
+                  <h3 className="text-sm font-semibold text-finops">Plano & Pagamento</h3>
+                  <p className="text-xs text-muted-foreground">Gerencie assinatura e métodos de pagamento</p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                onClick={() => {
+                  onOpenChange(false);
+                  navigate("/billing");
+                }}
+                className="glass glass-hover border-2 border-finops/40 hover:border-finops hover:bg-finops/10 gap-2 shadow-[0_0_15px_rgba(0,255,153,0.2)] hover:shadow-[0_0_25px_rgba(0,255,153,0.4)] transition-all duration-300"
+              >
+                <CreditCard className="h-4 w-4" />
+                Upgrade & Pagamentos
+              </Button>
+            </div>
+            <Separator className="bg-finops/20" />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Plano Atual:</span>
+              <span className="font-semibold text-foreground">Gratuito</span>
             </div>
           </div>
 
