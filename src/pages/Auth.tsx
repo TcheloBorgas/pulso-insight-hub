@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, XCircle, Chrome } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Separator } from "@/components/ui/separator";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -94,17 +95,61 @@ const Auth = () => {
     }, 1000);
   };
 
+  const handleGoogleLogin = () => {
+    setLoading(true);
+    // Simular login com Google
+    setTimeout(() => {
+      localStorage.setItem("isAuthenticated", "true");
+      toast({
+        title: "Login realizado",
+        description: "Bem-vindo via Google!",
+      });
+      navigate("/dashboard");
+      setLoading(false);
+    }, 1000);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+      {/* Background animated elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-72 h-72 bg-finops/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      <div className="w-full max-w-md relative z-10 animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Pulso</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-4xl font-bold mb-2 neon-text" style={{ 
+            background: 'linear-gradient(135deg, hsl(180 100% 70%) 0%, hsl(150 100% 65%) 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}>Pulso</h1>
+          <p className="text-foreground/80">
             {isLogin ? "Acesse sua conta" : "Crie sua conta"}
           </p>
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
+        <div className="glass-strong border-2 border-primary/30 rounded-2xl p-8 shadow-[0_0_30px_rgba(0,255,255,0.2)]">
+          {/* Google Login Button */}
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full glass glass-hover border-2 hover:border-primary/50 mb-4"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+          >
+            <Chrome className="mr-2 h-5 w-5" />
+            Continuar com Google
+          </Button>
+
+          <div className="relative my-6">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+              ou continue com e-mail
+            </span>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
@@ -218,7 +263,11 @@ const Auth = () => {
               </div>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button 
+              type="submit" 
+              className="w-full glass-strong border-2 border-primary hover:border-primary-light shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] bg-gradient-to-r from-primary/80 to-primary-deep/60" 
+              disabled={loading}
+            >
               {loading ? "Carregando..." : isLogin ? "Entrar" : "Criar conta"}
             </Button>
           </form>
