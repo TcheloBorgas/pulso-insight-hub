@@ -1,4 +1,4 @@
-import { Zap, Activity, Database } from "lucide-react";
+import { Network, TrendingDown, BrainCircuit } from "lucide-react";
 
 interface LayerSelectionProps {
   activeLayers: {
@@ -39,7 +39,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
             aria-label="Toggle Pulso CSA"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <Zap 
+              <Network 
                 className={`
                   transition-all duration-300 drop-shadow-[0_0_15px_rgba(0,255,255,0.9)]
                   ${activeLayers.pulso 
@@ -92,7 +92,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
             aria-label="Toggle Camada 5 - FinOps"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <Activity 
+              <TrendingDown 
                 className={`
                   transition-all duration-300 drop-shadow-[0_0_15px_rgba(0,255,153,0.9)]
                   ${activeLayers.finops 
@@ -145,7 +145,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
             aria-label="Toggle Camada 6 - Dados & IA"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <Database 
+              <BrainCircuit 
                 className={`
                   transition-all duration-300 drop-shadow-[0_0_15px_rgba(191,0,255,0.9)]
                   ${activeLayers.data 
