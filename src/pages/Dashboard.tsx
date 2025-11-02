@@ -111,7 +111,7 @@ const Dashboard = () => {
                     size="sm"
                     className={`flex items-center gap-2 glass glass-hover border-2 transition-all duration-200 ${
                       activeLayers.preview 
-                        ? 'border-primary bg-gradient-to-r from-primary/80 to-primary-deep/60 shadow-[0_0_20px_rgba(0,255,255,0.4)] text-white' 
+                        ? 'border-primary bg-gradient-to-r from-primary/80 to-primary-deep/60 shadow-[0_0_20px_rgba(0,255,255,0.4)] text-white [&>span]:text-white [&>svg]:text-white' 
                         : 'border-primary/40 hover:border-primary/60'
                     }`}
                     onClick={() => setActiveLayers(prev => ({ ...prev, preview: !prev.preview }))}

@@ -239,14 +239,16 @@ const Billing = () => {
               variant="outline"
               size="sm"
               onClick={() => setHasOpenAIKey(!hasOpenAIKey)}
-              className={`glass glass-hover border-2 gap-2 transition-all duration-200 ${
+              className={`glass glass-hover border-2 gap-2 transition-all duration-300 ${
                 hasOpenAIKey 
-                  ? 'border-dataAi bg-gradient-to-r from-dataAi/20 to-secondary/20 shadow-[0_0_15px_rgba(191,0,255,0.3)]' 
-                  : 'border-primary/30 hover:border-dataAi/50'
+                  ? 'border-dataAi bg-gradient-to-r from-dataAi/30 to-secondary/30 shadow-[0_0_20px_rgba(191,0,255,0.5)] scale-105' 
+                  : 'border-primary/30 hover:border-dataAi/50 hover:scale-105'
               }`}
             >
-              <Sparkles className={`h-4 w-4 ${hasOpenAIKey ? 'text-dataAi' : 'text-muted-foreground'}`} />
-              {hasOpenAIKey ? 'Tenho API OpenAI ✓' : 'Tenho API OpenAI'}
+              <Sparkles className={`h-5 w-5 transition-all duration-300 ${hasOpenAIKey ? 'text-dataAi animate-pulse' : 'text-muted-foreground'}`} />
+              <span className="font-semibold">
+                {hasOpenAIKey ? '✓ Desconto OpenAI Ativo (15%)' : 'Tenho Chave API OpenAI'}
+              </span>
             </Button>
           </div>
 
@@ -287,14 +289,16 @@ const Billing = () => {
 
                     <div>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-bold">USD$ {price.toFixed(2)}</span>
+                        <span className={`text-3xl font-bold transition-all duration-500 ${hasOpenAIKey ? 'animate-fade-in' : ''}`}>
+                          USD$ {price.toFixed(2)}
+                        </span>
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {billingCycle === "monthly" ? "por mês" : "por ano"}
                       </p>
-                      {billingCycle === "yearly" && (
-                        <p className="text-xs text-finops font-semibold">
-                          15% de desconto
+                      {(billingCycle === "yearly" || hasOpenAIKey) && (
+                        <p className="text-xs text-finops font-semibold animate-fade-in">
+                          15% de desconto {hasOpenAIKey && '(OpenAI API)'}
                         </p>
                       )}
                     </div>
