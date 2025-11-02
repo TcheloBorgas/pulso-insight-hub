@@ -135,7 +135,7 @@ const Auth = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full glass glass-hover border-2 hover:border-primary/50 mb-4"
+            className="w-full glass glass-hover border-2 hover:border-primary/50 mb-4 transition-all duration-200"
             onClick={handleGoogleLogin}
             disabled={loading}
           >
@@ -265,7 +265,7 @@ const Auth = () => {
 
             <Button 
               type="submit" 
-              className="w-full glass-strong border-2 border-primary hover:border-primary-light shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] bg-gradient-to-r from-primary/80 to-primary-deep/60" 
+              className="w-full glass-strong border-2 border-primary hover:border-primary-light shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] bg-gradient-to-r from-primary/80 to-primary-deep/60 transition-all duration-200" 
               disabled={loading}
             >
               {loading ? "Carregando..." : isLogin ? "Entrar" : "Criar conta"}

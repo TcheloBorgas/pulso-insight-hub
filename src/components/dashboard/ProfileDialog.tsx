@@ -255,7 +255,7 @@ const ProfileDialog = ({ open, onOpenChange }: ProfileDialogProps) => {
                   onOpenChange(false);
                   navigate("/billing");
                 }}
-                className="glass glass-hover border-2 border-finops/40 hover:border-finops hover:bg-finops/10 gap-2 shadow-[0_0_15px_rgba(0,255,153,0.2)] hover:shadow-[0_0_25px_rgba(0,255,153,0.4)] transition-all duration-300"
+                className="bg-gradient-to-r from-finops/80 to-success/60 hover:from-finops hover:to-success border-2 border-finops gap-2 shadow-[0_0_20px_rgba(0,255,153,0.4)] hover:shadow-[0_0_30px_rgba(0,255,153,0.6)] transition-all duration-200 text-white"
               >
                 <CreditCard className="h-4 w-4" />
                 Upgrade & Pagamentos
