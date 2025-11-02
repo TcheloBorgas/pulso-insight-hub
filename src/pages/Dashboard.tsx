@@ -122,12 +122,13 @@ const Dashboard = () => {
                 </div>
                 
                 {activeLayers.preview && (
-                  <div className="glass-strong neon-glow rounded-lg p-4">
+                  <div className="glass-strong rounded-lg p-4 border-2 border-primary/30">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-primary neon-glow">
+                      <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                        <Monitor className="h-4 w-4 text-primary" />
                         Preview do Frontend
                       </h3>
-                      <span className="text-xs text-primary/70 font-mono">
+                      <span className="text-xs text-muted-foreground font-mono px-2 py-1 rounded bg-primary/10">
                         localhost:3000
                       </span>
                     </div>

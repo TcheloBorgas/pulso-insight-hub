@@ -1,4 +1,4 @@
-import { Zap, Activity, BarChart3 } from "lucide-react";
+import { Zap, Activity, Database } from "lucide-react";
 
 interface LayerSelectionProps {
   activeLayers: {
@@ -145,7 +145,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
             aria-label="Toggle Camada 6 - Dados & IA"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <BarChart3 
+              <Database 
                 className={`
                   transition-all duration-300 drop-shadow-[0_0_15px_rgba(191,0,255,0.9)]
                   ${activeLayers.data 
