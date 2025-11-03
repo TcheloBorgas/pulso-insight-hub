@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { Send, Trash2, Copy, Clock, FolderOpen, FileCode } from "lucide-react";
+import { Send, Trash2, Copy, Clock, FolderOpen, FileCode, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import FileTree from "./FileTree";
+
+interface EnvVariable {
+  name: string;
+  value: string;
+}
 
 interface FileNode {
   name: string;
@@ -21,13 +26,43 @@ interface PromptHistory {
 
 const PromptPanel = () => {
   const [prompt, setPrompt] = useState("");
-  const [envVars, setEnvVars] = useState("");
+  const [envVars, setEnvVars] = useState<EnvVariable[]>([]);
+  const [newVarName, setNewVarName] = useState("");
+  const [newVarValue, setNewVarValue] = useState("");
   const [folderPath, setFolderPath] = useState("");
   const [requestId, setRequestId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<PromptHistory[]>([]);
   const [fileStructure, setFileStructure] = useState<FileNode[] | null>(null);
   const { toast } = useToast();
+
+  const addEnvVariable = () => {
+    if (!newVarName.trim() || !newVarValue.trim()) {
+      toast({
+        title: "Campos vazios",
+        description: "Preencha o nome e o valor da variável",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (envVars.some(v => v.name === newVarName)) {
+      toast({
+        title: "Variável duplicada",
+        description: "Uma variável com este nome já existe",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setEnvVars([...envVars, { name: newVarName, value: newVarValue }]);
+    setNewVarName("");
+    setNewVarValue("");
+  };
+
+  const removeEnvVariable = (index: number) => {
+    setEnvVars(envVars.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = () => {
     if (!prompt.trim()) return;
@@ -95,7 +130,9 @@ const PromptPanel = () => {
 
   const handleClear = () => {
     setPrompt("");
-    setEnvVars("");
+    setEnvVars([]);
+    setNewVarName("");
+    setNewVarValue("");
     setFolderPath("");
     setRequestId(null);
     setFileStructure(null);
@@ -136,18 +173,80 @@ const PromptPanel = () => {
         </div>
 
         {/* Variáveis de Ambiente */}
-        <div className="space-y-2">
-          <Label htmlFor="env-vars" className="text-sm font-medium text-foreground flex items-center gap-2">
+        <div className="space-y-3">
+          <Label className="text-sm font-medium text-foreground flex items-center gap-2">
             <FileCode className="h-4 w-4 text-primary" />
             Variáveis de Ambiente
           </Label>
-          <Textarea
-            id="env-vars"
-            placeholder="Ex.: DATABASE_URL=postgresql://...\nAPI_KEY=abc123\nPORT=3000"
-            value={envVars}
-            onChange={(e) => setEnvVars(e.target.value)}
-            className="min-h-[80px] resize-none border-primary/30 bg-background/50 focus-visible:ring-primary"
-          />
+          
+          {/* Tabela de variáveis */}
+          {envVars.length > 0 && (
+            <div className="border border-primary/30 rounded-lg overflow-hidden bg-background/50">
+              <div className="max-h-[200px] overflow-y-auto">
+                <table className="w-full">
+                  <thead className="bg-primary/10 sticky top-0">
+                    <tr>
+                      <th className="text-left text-xs font-semibold text-foreground px-3 py-2 border-b border-primary/20">
+                        Nome da Variável
+                      </th>
+                      <th className="text-left text-xs font-semibold text-foreground px-3 py-2 border-b border-primary/20">
+                        Valor
+                      </th>
+                      <th className="w-12 border-b border-primary/20"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {envVars.map((envVar, index) => (
+                      <tr key={index} className="border-b border-primary/10 hover:bg-primary/5 transition-colors">
+                        <td className="px-3 py-2 text-sm font-mono text-foreground">
+                          {envVar.name}
+                        </td>
+                        <td className="px-3 py-2 text-sm font-mono text-muted-foreground truncate max-w-[200px]">
+                          {envVar.value}
+                        </td>
+                        <td className="px-3 py-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeEnvVariable(index)}
+                            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Formulário para adicionar nova variável */}
+          <div className="grid grid-cols-[1fr,1fr,auto] gap-2">
+            <Input
+              placeholder="Nome (ex: API_KEY)"
+              value={newVarName}
+              onChange={(e) => setNewVarName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addEnvVariable()}
+              className="border-primary/30 bg-background/50 focus-visible:ring-primary"
+            />
+            <Input
+              placeholder="Valor"
+              value={newVarValue}
+              onChange={(e) => setNewVarValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addEnvVariable()}
+              className="border-primary/30 bg-background/50 focus-visible:ring-primary"
+            />
+            <Button
+              onClick={addEnvVariable}
+              size="icon"
+              className="h-10 w-10"
+              variant="outline"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Prompt Principal */}
