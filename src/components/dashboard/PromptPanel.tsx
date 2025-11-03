@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Send, Trash2, Copy, Clock } from "lucide-react";
+import { Send, Trash2, Copy, Clock, FolderOpen, FileCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import FileTree from "./FileTree";
 
@@ -19,6 +21,8 @@ interface PromptHistory {
 
 const PromptPanel = () => {
   const [prompt, setPrompt] = useState("");
+  const [envVars, setEnvVars] = useState("");
+  const [folderPath, setFolderPath] = useState("");
   const [requestId, setRequestId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<PromptHistory[]>([]);
@@ -91,6 +95,8 @@ const PromptPanel = () => {
 
   const handleClear = () => {
     setPrompt("");
+    setEnvVars("");
+    setFolderPath("");
     setRequestId(null);
     setFileStructure(null);
   };
@@ -114,13 +120,50 @@ const PromptPanel = () => {
     <div className="space-y-6">
       {/* Área de input */}
       <div className="glass-strong neon-glow rounded-2xl p-6 space-y-4">
-        <Textarea
-          id="prompt-input"
-          placeholder="Ex.: 'Gerar blueprint de pastas e endpoints para um sistema de gestão de pedidos...'"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="min-h-[120px] resize-none border-0 focus-visible:ring-0 bg-transparent text-base"
-        />
+        {/* Caminho da Pasta */}
+        <div className="space-y-2">
+          <Label htmlFor="folder-path" className="text-sm font-medium text-foreground flex items-center gap-2">
+            <FolderOpen className="h-4 w-4 text-primary" />
+            Caminho da Pasta
+          </Label>
+          <Input
+            id="folder-path"
+            placeholder="Ex.: C:\Users\pytho\Desktop\Study\Github Repos\PulsoAPI"
+            value={folderPath}
+            onChange={(e) => setFolderPath(e.target.value)}
+            className="border-primary/30 bg-background/50 focus-visible:ring-primary"
+          />
+        </div>
+
+        {/* Variáveis de Ambiente */}
+        <div className="space-y-2">
+          <Label htmlFor="env-vars" className="text-sm font-medium text-foreground flex items-center gap-2">
+            <FileCode className="h-4 w-4 text-primary" />
+            Variáveis de Ambiente
+          </Label>
+          <Textarea
+            id="env-vars"
+            placeholder="Ex.: DATABASE_URL=postgresql://...\nAPI_KEY=abc123\nPORT=3000"
+            value={envVars}
+            onChange={(e) => setEnvVars(e.target.value)}
+            className="min-h-[80px] resize-none border-primary/30 bg-background/50 focus-visible:ring-primary"
+          />
+        </div>
+
+        {/* Prompt Principal */}
+        <div className="space-y-2">
+          <Label htmlFor="prompt-input" className="text-sm font-medium text-foreground flex items-center gap-2">
+            <Send className="h-4 w-4 text-primary" />
+            Descrição do Projeto
+          </Label>
+          <Textarea
+            id="prompt-input"
+            placeholder="Ex.: 'Gerar blueprint de pastas e endpoints para um sistema de gestão de pedidos...'"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            className="min-h-[120px] resize-none border-0 focus-visible:ring-0 bg-transparent text-base"
+          />
+        </div>
 
         <div className="flex gap-3">
           <Button 
