@@ -45,9 +45,19 @@ const DashboardHeader = () => {
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Menu do usuário">
-                  <User className="h-5 w-5" />
-                </Button>
+                <div className="relative group">
+                  {/* Círculo neon que muda de cor */}
+                  <div className="absolute inset-0 rounded-full blur-sm bg-primary/60 group-hover:bg-finops/80 group-active:bg-dataAi/80 animate-pulse transition-all duration-300 group-hover:blur-md group-active:blur-lg"></div>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    aria-label="Menu do usuário"
+                    className="relative z-10 border-2 border-primary group-hover:border-finops group-active:border-dataAi shadow-[0_0_20px_rgba(0,255,255,0.6)] group-hover:shadow-[0_0_30px_rgba(0,255,153,0.8)] group-active:shadow-[0_0_40px_rgba(191,0,255,0.9)] transition-all duration-300"
+                  >
+                    <User className="h-5 w-5" />
+                  </Button>
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setProfileOpen(true)}>
