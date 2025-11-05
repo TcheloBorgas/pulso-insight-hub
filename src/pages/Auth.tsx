@@ -97,7 +97,7 @@ const Auth = () => {
       createdAt: new Date().toISOString(),
     };
 
-    localStorage.setItem("userProfiles", JSON.stringify([newProfile]));
+    localStorage.setItem("profiles", JSON.stringify([newProfile]));
     localStorage.setItem("userProfile", JSON.stringify({
       name: formData.name,
       email: formData.email,
@@ -108,7 +108,7 @@ const Auth = () => {
       title: "Conta criada com sucesso",
       description: `Perfil "${newProfile.name}" criado. Bem-vindo!`,
     });
-    navigate("/dashboard");
+    navigate("/profile-selection");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -153,11 +153,17 @@ const Auth = () => {
       localStorage.setItem("isAuthenticated", "true");
       
       if (isLogin) {
+        const storedProfiles = localStorage.getItem("profiles");
         toast({
           title: "Login realizado",
           description: "Bem-vindo de volta!",
         });
-        navigate("/dashboard");
+        
+        if (!storedProfiles || JSON.parse(storedProfiles).length === 0) {
+          setShowProfileDialog(true);
+        } else {
+          navigate("/profile-selection");
+        }
       } else {
         // Para signup, mostrar diálogo de criação de perfil obrigatório
         setShowProfileDialog(true);
@@ -172,11 +178,19 @@ const Auth = () => {
     // Simular login com Google
     setTimeout(() => {
       localStorage.setItem("isAuthenticated", "true");
+      const storedProfiles = localStorage.getItem("profiles");
+      
       toast({
         title: "Login realizado",
         description: "Bem-vindo via Google!",
       });
-      navigate("/dashboard");
+      
+      if (!storedProfiles || JSON.parse(storedProfiles).length === 0) {
+        setShowProfileDialog(true);
+      } else {
+        navigate("/profile-selection");
+      }
+      
       setLoading(false);
     }, 1000);
   };
