@@ -5,14 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Card } from "@/components/ui/card";
 
 interface LogEntry {
   id: string;
@@ -58,7 +50,6 @@ const LogsPanel = () => {
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [environmentStatus, setEnvironmentStatus] = useState<"stopped" | "running">("stopped");
   const [environmentType, setEnvironmentType] = useState<"docker" | "venv" | null>(null);
-  const [showEnvironmentDialog, setShowEnvironmentDialog] = useState(false);
   const [showAppLogs, setShowAppLogs] = useState(false);
   const [testEnvironment, setTestEnvironment] = useState<"docker" | "venv">("docker");
 
@@ -115,18 +106,17 @@ const LogsPanel = () => {
     setLogs((prev) => [newLog, ...prev]);
   };
 
-  const handleStartEnvironment = (type: "docker" | "venv") => {
-    setEnvironmentType(type);
+  const handleStartEnvironment = () => {
+    setEnvironmentType(testEnvironment);
     setEnvironmentStatus("running");
-    setShowEnvironmentDialog(false);
     
-    addLog("info", `Iniciando ambiente ${type === "docker" ? "Docker" : "Virtual Environment"}...`, "environment");
+    addLog("info", `Iniciando ambiente ${testEnvironment === "docker" ? "Docker" : "Virtual Environment"}...`, "environment");
     
     setTimeout(() => {
-      addLog("info", `Ambiente ${type === "docker" ? "Docker" : "Virtual Environment"} iniciado com sucesso`, "environment");
+      addLog("info", `Ambiente ${testEnvironment === "docker" ? "Docker" : "Virtual Environment"} iniciado com sucesso`, "environment");
       toast({
         title: "Ambiente iniciado",
-        description: `${type === "docker" ? "Docker" : "Virtual Environment"} está rodando`,
+        description: `${testEnvironment === "docker" ? "Docker" : "Virtual Environment"} está rodando`,
       });
     }, 2000);
   };
@@ -257,7 +247,7 @@ const LogsPanel = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setShowEnvironmentDialog(true)}
+            onClick={handleStartEnvironment}
             disabled={environmentStatus === "running"}
             className="border-primary/40 hover:border-primary hover:bg-primary/10 disabled:opacity-50"
           >
@@ -372,61 +362,6 @@ const LogsPanel = () => {
         </div>
       </div>
 
-      {/* Dialog para escolher tipo de ambiente */}
-      <Dialog open={showEnvironmentDialog} onOpenChange={setShowEnvironmentDialog}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-primary">
-              Escolha o Tipo de Ambiente
-            </DialogTitle>
-            <DialogDescription>
-              Selecione como deseja executar o ambiente backend
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <Card
-              onClick={() => handleStartEnvironment("docker")}
-              className="glass p-6 cursor-pointer border-2 border-primary/20 hover:border-primary hover:bg-primary/5 transition-all hover:scale-105"
-            >
-              <div className="text-center space-y-3">
-                <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
-                  <Terminal className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="font-bold text-lg text-foreground">Docker</h3>
-                <p className="text-sm text-muted-foreground">
-                  Ambiente isolado com containers
-                </p>
-                <ul className="text-xs text-muted-foreground text-left space-y-1">
-                  <li>✓ Isolamento total</li>
-                  <li>✓ Fácil deploy</li>
-                  <li>✓ Reproduzível</li>
-                </ul>
-              </div>
-            </Card>
-
-            <Card
-              onClick={() => handleStartEnvironment("venv")}
-              className="glass p-6 cursor-pointer border-2 border-finops/20 hover:border-finops hover:bg-finops/5 transition-all hover:scale-105"
-            >
-              <div className="text-center space-y-3">
-                <div className="w-16 h-16 mx-auto rounded-full bg-finops/20 flex items-center justify-center">
-                  <Terminal className="h-8 w-8 text-finops" />
-                </div>
-                <h3 className="font-bold text-lg text-foreground">Virtual Env</h3>
-                <p className="text-sm text-muted-foreground">
-                  Ambiente virtual Python
-                </p>
-                <ul className="text-xs text-muted-foreground text-left space-y-1">
-                  <li>✓ Leve e rápido</li>
-                  <li>✓ Simples configuração</li>
-                  <li>✓ Controle de deps</li>
-                </ul>
-              </div>
-            </Card>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
