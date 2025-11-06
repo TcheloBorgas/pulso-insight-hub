@@ -219,7 +219,7 @@ const LogsPanel = () => {
           </Label>
           <div className="flex items-center gap-3">
             <span className={`text-sm font-medium transition-colors ${
-              testEnvironment === "docker" ? "text-emerald-500" : "text-muted-foreground"
+              testEnvironment === "docker" ? "text-blue-500" : "text-muted-foreground"
             }`}>
               Docker
             </span>
@@ -228,12 +228,12 @@ const LogsPanel = () => {
               onCheckedChange={(checked) => setTestEnvironment(checked ? "venv" : "docker")}
               className={
                 testEnvironment === "venv"
-                  ? "data-[state=checked]:bg-blue-500"
-                  : "data-[state=unchecked]:bg-emerald-500"
+                  ? "data-[state=checked]:bg-emerald-500"
+                  : "data-[state=unchecked]:bg-blue-500"
               }
             />
             <span className={`text-sm font-medium transition-colors ${
-              testEnvironment === "venv" ? "text-blue-500" : "text-muted-foreground"
+              testEnvironment === "venv" ? "text-emerald-500" : "text-muted-foreground"
             }`}>
               venv
             </span>
