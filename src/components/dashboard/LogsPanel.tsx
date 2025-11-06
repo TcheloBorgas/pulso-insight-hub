@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Terminal, Info, AlertTriangle, XCircle, Filter, Trash2, Play, RotateCw, Power, FileText, TestTube, Copy } from "lucide-react";
+import { Terminal, Info, AlertTriangle, XCircle, Filter, Trash2, Play, RotateCw, Power, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -61,7 +61,6 @@ const LogsPanel = () => {
   const [showEnvironmentDialog, setShowEnvironmentDialog] = useState(false);
   const [showAppLogs, setShowAppLogs] = useState(false);
   const [testEnvironment, setTestEnvironment] = useState<"docker" | "venv">("docker");
-  const [showTestDialog, setShowTestDialog] = useState(false);
 
   const getLevelIcon = (level: string) => {
     switch (level) {
@@ -186,49 +185,6 @@ const LogsPanel = () => {
     });
   };
 
-  const handleCopyCurl = (curl: string) => {
-    navigator.clipboard.writeText(curl);
-    toast({
-      title: "cURL copiado",
-      description: "Comando copiado para a área de transferência",
-    });
-  };
-
-  const testCurls = {
-    docker: [
-      {
-        name: "Health Check",
-        curl: `curl -X GET http://localhost:8000/health`,
-      },
-      {
-        name: "API Status",
-        curl: `curl -X GET http://localhost:8000/api/status`,
-      },
-      {
-        name: "Test POST",
-        curl: `curl -X POST http://localhost:8000/api/test \\
-  -H "Content-Type: application/json" \\
-  -d '{"test": "data"}'`,
-      },
-    ],
-    venv: [
-      {
-        name: "Health Check",
-        curl: `curl -X GET http://localhost:5000/health`,
-      },
-      {
-        name: "API Status",
-        curl: `curl -X GET http://localhost:5000/api/status`,
-      },
-      {
-        name: "Test POST",
-        curl: `curl -X POST http://localhost:5000/api/test \\
-  -H "Content-Type: application/json" \\
-  -d '{"test": "data"}'`,
-      },
-    ],
-  };
-
   return (
     <div className="space-y-4">
       <div className="glass-strong neon-glow rounded-2xl p-6">
@@ -256,35 +212,31 @@ const LogsPanel = () => {
           </Button>
         </div>
 
-        {/* Área de Teste com Switch */}
-        <div className="mb-6 glass p-4 rounded-xl border border-primary/20">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <Label className="text-sm font-medium text-foreground">
-                Testar com:
-              </Label>
-              <div className="flex items-center gap-3">
-                <span className={`text-sm ${testEnvironment === "docker" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-                  Docker
-                </span>
-                <Switch
-                  checked={testEnvironment === "venv"}
-                  onCheckedChange={(checked) => setTestEnvironment(checked ? "venv" : "docker")}
-                />
-                <span className={`text-sm ${testEnvironment === "venv" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-                  venv
-                </span>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowTestDialog(true)}
-              className="border-primary/40 hover:border-primary hover:bg-primary/10"
-            >
-              <TestTube className="h-3.5 w-3.5 mr-2" />
-              Testar
-            </Button>
+        {/* Switch Docker/venv */}
+        <div className="mb-6 flex items-center gap-4 p-4 glass border border-primary/20 rounded-xl">
+          <Label className="text-sm font-medium text-foreground">
+            Ambiente de teste:
+          </Label>
+          <div className="flex items-center gap-3">
+            <span className={`text-sm font-medium transition-colors ${
+              testEnvironment === "docker" ? "text-emerald-500" : "text-muted-foreground"
+            }`}>
+              Docker
+            </span>
+            <Switch
+              checked={testEnvironment === "venv"}
+              onCheckedChange={(checked) => setTestEnvironment(checked ? "venv" : "docker")}
+              className={
+                testEnvironment === "venv"
+                  ? "data-[state=checked]:bg-blue-500"
+                  : "data-[state=unchecked]:bg-emerald-500"
+              }
+            />
+            <span className={`text-sm font-medium transition-colors ${
+              testEnvironment === "venv" ? "text-blue-500" : "text-muted-foreground"
+            }`}>
+              venv
+            </span>
           </div>
         </div>
 
@@ -472,43 +424,6 @@ const LogsPanel = () => {
                 </ul>
               </div>
             </Card>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dialog de Testes com cURL */}
-      <Dialog open={showTestDialog} onOpenChange={setShowTestDialog}>
-        <DialogContent className="sm:max-w-[700px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-primary flex items-center gap-2">
-              <TestTube className="h-6 w-6" />
-              Testes cURL - {testEnvironment === "docker" ? "Docker" : "Virtual Env"}
-            </DialogTitle>
-            <DialogDescription>
-              Comandos de teste para o ambiente {testEnvironment === "docker" ? "Docker" : "Virtual Environment"}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 mt-4">
-            {testCurls[testEnvironment].map((test, index) => (
-              <div key={index} className="glass p-4 rounded-lg border border-primary/20">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold text-foreground">{test.name}</h4>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleCopyCurl(test.curl)}
-                    className="h-7 border-primary/40 hover:border-primary hover:bg-primary/10"
-                  >
-                    <Copy className="h-3 w-3 mr-1" />
-                    Copiar
-                  </Button>
-                </div>
-                <pre className="text-xs bg-background/50 p-3 rounded border border-primary/10 overflow-x-auto">
-                  <code className="text-muted-foreground font-mono">{test.curl}</code>
-                </pre>
-              </div>
-            ))}
           </div>
         </DialogContent>
       </Dialog>

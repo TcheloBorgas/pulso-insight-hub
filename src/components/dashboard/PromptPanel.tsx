@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -42,7 +41,6 @@ const PromptPanel = () => {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<PromptHistory[]>([]);
   const [fileStructure, setFileStructure] = useState<FileNode[] | null>(null);
-  const [testEnvironment, setTestEnvironment] = useState<"docker" | "venv">("docker");
   const [showTestDialog, setShowTestDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -232,40 +230,31 @@ const PromptPanel = () => {
     });
   };
 
-  const testCurls = {
-    docker: [
-      {
-        name: "Health Check",
-        curl: `curl -X GET http://localhost:8000/health`,
-      },
-      {
-        name: "API Status",
-        curl: `curl -X GET http://localhost:8000/api/status`,
-      },
-      {
-        name: "Test POST",
-        curl: `curl -X POST http://localhost:8000/api/test \\
+  const testCurls = [
+    {
+      name: "Health Check",
+      curl: `curl -X GET http://localhost:8000/health`,
+    },
+    {
+      name: "API Status",
+      curl: `curl -X GET http://localhost:8000/api/status`,
+    },
+    {
+      name: "List Users",
+      curl: `curl -X GET http://localhost:8000/api/users`,
+    },
+    {
+      name: "Create User",
+      curl: `curl -X POST http://localhost:8000/api/users \\
   -H "Content-Type: application/json" \\
-  -d '{"test": "data"}'`,
-      },
-    ],
-    venv: [
-      {
-        name: "Health Check",
-        curl: `curl -X GET http://localhost:5000/health`,
-      },
-      {
-        name: "API Status",
-        curl: `curl -X GET http://localhost:5000/api/status`,
-      },
-      {
-        name: "Test POST",
-        curl: `curl -X POST http://localhost:5000/api/test \\
-  -H "Content-Type: application/json" \\
-  -d '{"test": "data"}'`,
-      },
-    ],
-  };
+  -d '{"name": "John Doe", "email": "john@example.com"}'`,
+    },
+    {
+      name: "Upload File",
+      curl: `curl -X POST http://localhost:8000/api/upload \\
+  -F "file=@/path/to/file.pdf"`,
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -411,25 +400,6 @@ const PromptPanel = () => {
           />
         </div>
 
-        {/* Switch Docker/venv */}
-        <div className="flex items-center gap-4 p-4 glass border border-primary/20 rounded-xl">
-          <Label className="text-sm font-medium text-foreground">
-            Testar com:
-          </Label>
-          <div className="flex items-center gap-3">
-            <span className={`text-sm ${testEnvironment === "docker" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-              Docker
-            </span>
-            <Switch
-              checked={testEnvironment === "venv"}
-              onCheckedChange={(checked) => setTestEnvironment(checked ? "venv" : "docker")}
-            />
-            <span className={`text-sm ${testEnvironment === "venv" ? "text-primary font-medium" : "text-muted-foreground"}`}>
-              venv
-            </span>
-          </div>
-        </div>
-
         <div className="flex gap-3">
           <Button 
             onClick={handleSubmit} 
@@ -543,15 +513,15 @@ const PromptPanel = () => {
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-primary flex items-center gap-2">
               <TestTube className="h-6 w-6" />
-              Testes cURL - {testEnvironment === "docker" ? "Docker" : "Virtual Env"}
+              Exemplos de Testes cURL
             </DialogTitle>
             <DialogDescription>
-              Comandos de teste para o ambiente {testEnvironment === "docker" ? "Docker" : "Virtual Environment"}
+              Comandos de teste para seu backend
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 mt-4">
-            {testCurls[testEnvironment].map((test, index) => (
+            {testCurls.map((test, index) => (
               <div key={index} className="glass p-4 rounded-lg border border-primary/20">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold text-foreground">{test.name}</h4>
