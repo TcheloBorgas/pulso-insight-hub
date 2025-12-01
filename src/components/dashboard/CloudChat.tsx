@@ -1,10 +1,25 @@
 import { useState } from "react";
-import { Send, Cloud, Server, Settings, History, Trash2, Copy, FolderOpen, FileCode } from "lucide-react";
+import { Send, History, Trash2, Copy, FolderOpen, FileCode, Key, MapPin, Eye, EyeOff, ChevronDown, ChevronUp, CloudCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
+import { FaAws } from "react-icons/fa";
+import { VscAzure } from "react-icons/vsc";
+import { SiGooglecloud } from "react-icons/si";
 
 interface Message {
   id: string;
@@ -24,13 +39,30 @@ interface HistoryItem {
   status: "success" | "pending" | "error";
 }
 
+interface ProviderCredentials {
+  aws: { region: string; accessKeyId: string; secretAccessKey: string; accountId: string };
+  azure: { region: string; tenantId: string; clientId: string; clientSecret: string; subscriptionId: string };
+  gcp: { region: string; projectId: string; clientEmail: string; privateKey: string };
+}
+
 const CloudChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeProvider, setActiveProvider] = useState<"aws" | "azure" | "gcp">("aws");
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [showSecrets, setShowSecrets] = useState<{ aws: boolean; azure: boolean; gcp: boolean }>({ aws: false, azure: false, gcp: false });
+  const [expandedProvider, setExpandedProvider] = useState<"aws" | "azure" | "gcp" | null>(null);
+  const [credentials, setCredentials] = useState<ProviderCredentials>({
+    aws: { region: "", accessKeyId: "", secretAccessKey: "", accountId: "" },
+    azure: { region: "", tenantId: "", clientId: "", clientSecret: "", subscriptionId: "" },
+    gcp: { region: "", projectId: "", clientEmail: "", privateKey: "" },
+  });
   const { toast } = useToast();
+
+  const awsRegions = ["us-east-1", "us-east-2", "us-west-1", "us-west-2", "sa-east-1", "eu-west-1", "eu-central-1", "ap-southeast-1"];
+  const azureRegions = ["eastus", "eastus2", "westus", "westus2", "brazilsouth", "westeurope", "northeurope", "southeastasia"];
+  const gcpRegions = ["us-east1", "us-west1", "us-central1", "southamerica-east1", "europe-west1", "asia-southeast1"];
 
   const quickActions = [
     "Criar VPC com subnets públicas e privadas",
@@ -40,9 +72,17 @@ const CloudChat = () => {
   ];
 
   const providerColors = {
-    aws: "hsl(35 100% 55%)",
-    azure: "hsl(210 100% 55%)",
-    gcp: "hsl(4 80% 55%)",
+    aws: { bg: "bg-orange-500", border: "border-orange-500", text: "text-orange-400", hsl: "hsl(35 100% 55%)" },
+    azure: { bg: "bg-blue-500", border: "border-blue-500", text: "text-blue-400", hsl: "hsl(210 100% 55%)" },
+    gcp: { bg: "bg-red-500", border: "border-red-500", text: "text-red-400", hsl: "hsl(4 80% 55%)" },
+  };
+
+  const handleSaveCredentials = (provider: "aws" | "azure" | "gcp") => {
+    localStorage.setItem(`cloudConfig_${provider}`, JSON.stringify(credentials[provider]));
+    toast({
+      title: "Credenciais salvas",
+      description: `Configuração ${provider.toUpperCase()} salva com sucesso`,
+    });
   };
 
   const handleSend = () => {
@@ -60,7 +100,6 @@ const CloudChat = () => {
     setInput("");
     setLoading(true);
 
-    // Adicionar ao histórico
     const historyItem: HistoryItem = {
       id: Date.now().toString(),
       prompt: input,
@@ -70,7 +109,6 @@ const CloudChat = () => {
     };
     setHistory([historyItem, ...history.slice(0, 9)]);
 
-    // Simular resposta de criação de infraestrutura
     setTimeout(() => {
       const terraformCode = `# Terraform - ${activeProvider.toUpperCase()}
 resource "${activeProvider === 'aws' ? 'aws_vpc' : activeProvider === 'azure' ? 'azurerm_virtual_network' : 'google_compute_network'}" "main" {
@@ -101,18 +139,12 @@ resource "${activeProvider === 'aws' ? 'aws_vpc' : activeProvider === 'azure' ? 
       };
 
       setMessages((prev) => [...prev, systemMessage]);
-      setHistory((prev) => 
-        prev.map((item, idx) => 
-          idx === 0 ? { ...item, status: "success" as const } : item
-        )
-      );
+      setHistory((prev) => prev.map((item, idx) => idx === 0 ? { ...item, status: "success" as const } : item));
       setLoading(false);
     }, 2000);
   };
 
-  const handleQuickAction = (action: string) => {
-    setInput(action);
-  };
+  const handleQuickAction = (action: string) => setInput(action);
 
   const handleReuseHistory = (item: HistoryItem) => {
     setActiveProvider(item.provider);
@@ -121,26 +153,139 @@ resource "${activeProvider === 'aws' ? 'aws_vpc' : activeProvider === 'azure' ? 
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
-    toast({
-      title: "Código copiado",
-      description: "Terraform copiado para a área de transferência",
-    });
+    toast({ title: "Código copiado", description: "Terraform copiado para a área de transferência" });
   };
 
   const handleClearHistory = () => {
     setHistory([]);
-    toast({
-      title: "Histórico limpo",
-      description: "Todo o histórico foi removido",
-    });
+    toast({ title: "Histórico limpo", description: "Todo o histórico foi removido" });
   };
+
+  const renderProviderButton = (provider: "aws" | "azure" | "gcp", icon: React.ReactNode, label: string) => (
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <Button
+          variant={activeProvider === provider ? "default" : "outline"}
+          onClick={() => setActiveProvider(provider)}
+          className={`flex-1 h-12 gap-2 ${activeProvider === provider ? providerColors[provider].bg + " text-white" : `border-2 ${providerColors[provider].border}/40 hover:${providerColors[provider].border}`}`}
+        >
+          {icon}
+          {label}
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setExpandedProvider(expandedProvider === provider ? null : provider)}
+          className={`h-12 w-12 border-2 ${providerColors[provider].border}/40`}
+        >
+          {expandedProvider === provider ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </Button>
+      </div>
+      
+      <Collapsible open={expandedProvider === provider}>
+        <CollapsibleContent className="space-y-3 p-4 rounded-lg border border-primary/20 bg-background/50">
+          {provider === "aws" && (
+            <>
+              <div className="space-y-1">
+                <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
+                <Select value={credentials.aws.region} onValueChange={(v) => setCredentials({ ...credentials, aws: { ...credentials.aws, region: v } })}>
+                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>{awsRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Account ID</Label>
+                <Input className="h-8 text-xs" placeholder="123456789012" value={credentials.aws.accountId} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, accountId: e.target.value } })} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Access Key ID</Label>
+                <Input className="h-8 text-xs" placeholder="AKIAIOSFODNN7EXAMPLE" value={credentials.aws.accessKeyId} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, accessKeyId: e.target.value } })} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Secret Access Key</Label>
+                <div className="relative">
+                  <Input className="h-8 text-xs pr-8" type={showSecrets.aws ? "text" : "password"} placeholder="••••••••" value={credentials.aws.secretAccessKey} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, secretAccessKey: e.target.value } })} />
+                  <button type="button" onClick={() => setShowSecrets({ ...showSecrets, aws: !showSecrets.aws })} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
+                    {showSecrets.aws ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                  </button>
+                </div>
+              </div>
+              <Button size="sm" className="w-full h-8 text-xs bg-orange-500 hover:bg-orange-600" onClick={() => handleSaveCredentials("aws")}>Salvar AWS</Button>
+            </>
+          )}
+          {provider === "azure" && (
+            <>
+              <div className="space-y-1">
+                <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
+                <Select value={credentials.azure.region} onValueChange={(v) => setCredentials({ ...credentials, azure: { ...credentials.azure, region: v } })}>
+                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>{azureRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Subscription ID</Label>
+                <Input className="h-8 text-xs" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.subscriptionId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, subscriptionId: e.target.value } })} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Tenant ID</Label>
+                <Input className="h-8 text-xs" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.tenantId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, tenantId: e.target.value } })} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Client ID</Label>
+                <Input className="h-8 text-xs" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.clientId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, clientId: e.target.value } })} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Client Secret</Label>
+                <div className="relative">
+                  <Input className="h-8 text-xs pr-8" type={showSecrets.azure ? "text" : "password"} placeholder="••••••••" value={credentials.azure.clientSecret} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, clientSecret: e.target.value } })} />
+                  <button type="button" onClick={() => setShowSecrets({ ...showSecrets, azure: !showSecrets.azure })} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
+                    {showSecrets.azure ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                  </button>
+                </div>
+              </div>
+              <Button size="sm" className="w-full h-8 text-xs bg-blue-500 hover:bg-blue-600" onClick={() => handleSaveCredentials("azure")}>Salvar Azure</Button>
+            </>
+          )}
+          {provider === "gcp" && (
+            <>
+              <div className="space-y-1">
+                <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
+                <Select value={credentials.gcp.region} onValueChange={(v) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, region: v } })}>
+                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>{gcpRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Project ID</Label>
+                <Input className="h-8 text-xs" placeholder="my-project-123" value={credentials.gcp.projectId} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, projectId: e.target.value } })} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Client Email</Label>
+                <Input className="h-8 text-xs" placeholder="sa@project.iam.gserviceaccount.com" value={credentials.gcp.clientEmail} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, clientEmail: e.target.value } })} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Private Key</Label>
+                <div className="relative">
+                  <Input className="h-8 text-xs pr-8" type={showSecrets.gcp ? "text" : "password"} placeholder="••••••••" value={credentials.gcp.privateKey} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, privateKey: e.target.value } })} />
+                  <button type="button" onClick={() => setShowSecrets({ ...showSecrets, gcp: !showSecrets.gcp })} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
+                    {showSecrets.gcp ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                  </button>
+                </div>
+              </div>
+              <Button size="sm" className="w-full h-8 text-xs bg-red-500 hover:bg-red-600" onClick={() => handleSaveCredentials("gcp")}>Salvar GCP</Button>
+            </>
+          )}
+        </CollapsibleContent>
+      </Collapsible>
+    </div>
+  );
 
   return (
     <div className="glass-strong rounded-2xl overflow-hidden border-2 border-cyan-500/30" style={{ boxShadow: '0 0 30px rgba(0, 200, 255, 0.2)' }}>
       {/* Header */}
       <div className="p-4 border-b border-cyan-500/30 bg-gradient-to-r from-cyan-500/10 to-blue-600/10">
         <h2 className="text-lg font-semibold flex items-center gap-2" style={{ color: 'hsl(190 100% 65%)' }}>
-          <Cloud className="h-5 w-5" style={{ color: 'hsl(190 100% 65%)' }} />
+          <CloudCog className="h-5 w-5" style={{ color: 'hsl(190 100% 65%)' }} />
           Cloud Infrastructure
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
@@ -148,55 +293,29 @@ resource "${activeProvider === 'aws' ? 'aws_vpc' : activeProvider === 'azure' ? 
         </p>
       </div>
 
-      {/* Provider Tabs */}
-      <div className="p-4 border-b border-cyan-500/20">
-        <Tabs value={activeProvider} onValueChange={(v) => setActiveProvider(v as typeof activeProvider)}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="aws" className="flex items-center gap-2 data-[state=active]:bg-orange-500/20">
-              <Server className="h-4 w-4" />
-              AWS
-            </TabsTrigger>
-            <TabsTrigger value="azure" className="flex items-center gap-2 data-[state=active]:bg-blue-500/20">
-              <Cloud className="h-4 w-4" />
-              Azure
-            </TabsTrigger>
-            <TabsTrigger value="gcp" className="flex items-center gap-2 data-[state=active]:bg-red-500/20">
-              <Settings className="h-4 w-4" />
-              GCP
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+      {/* Provider Selection */}
+      <div className="p-4 border-b border-cyan-500/20 space-y-3">
+        {renderProviderButton("aws", <FaAws className="h-5 w-5" />, "AWS")}
+        {renderProviderButton("azure", <VscAzure className="h-5 w-5" />, "Azure")}
+        {renderProviderButton("gcp", <SiGooglecloud className="h-5 w-5" />, "GCP")}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
         {/* Chat Area */}
         <div className="lg:col-span-2 border-r border-cyan-500/20">
-          {/* Messages */}
-          <div className="h-[400px] overflow-y-auto p-4 space-y-4">
+          <div className="h-[350px] overflow-y-auto p-4 space-y-4">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                <Cloud className="h-12 w-12 text-cyan-400/50" />
+                <CloudCog className="h-12 w-12 text-cyan-400/50" />
                 <div>
-                  <p className="text-sm text-foreground font-medium">
-                    Descreva a infraestrutura que deseja criar
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Use linguagem natural ou informe o caminho de um arquivo de configuração
-                  </p>
+                  <p className="text-sm text-foreground font-medium">Descreva a infraestrutura que deseja criar</p>
+                  <p className="text-xs text-muted-foreground mt-1">Use linguagem natural ou informe o caminho de um arquivo</p>
                 </div>
-                
-                {/* Quick Actions */}
                 <div className="pt-4 w-full max-w-md">
                   <p className="text-xs text-muted-foreground mb-2">Sugestões:</p>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {quickActions.map((action, idx) => (
-                      <Button
-                        key={idx}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleQuickAction(action)}
-                        className="text-xs border-cyan-500/30 hover:border-cyan-500 hover:bg-cyan-500/10"
-                      >
+                      <Button key={idx} variant="outline" size="sm" onClick={() => handleQuickAction(action)} className="text-xs border-cyan-500/30 hover:border-cyan-500 hover:bg-cyan-500/10">
                         {action}
                       </Button>
                     ))}
@@ -205,80 +324,38 @@ resource "${activeProvider === 'aws' ? 'aws_vpc' : activeProvider === 'azure' ? 
               </div>
             ) : (
               messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[85%] rounded-lg p-3 ${
-                      message.role === "user"
-                        ? "bg-cyan-500/20 border border-cyan-500/30"
-                        : "bg-background/50 border border-border/50"
-                    }`}
-                  >
+                <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[85%] rounded-lg p-3 ${message.role === "user" ? "bg-cyan-500/20 border border-cyan-500/30" : "bg-background/50 border border-border/50"}`}>
                     {message.provider && (
-                      <Badge 
-                        variant="outline" 
-                        className="mb-2 text-xs"
-                        style={{ borderColor: providerColors[message.provider], color: providerColors[message.provider] }}
-                      >
+                      <Badge variant="outline" className="mb-2 text-xs" style={{ borderColor: providerColors[message.provider].hsl, color: providerColors[message.provider].hsl }}>
                         {message.provider.toUpperCase()}
                       </Badge>
                     )}
-                    
                     <p className="text-sm text-foreground">{message.content}</p>
-                    
                     {message.resources && (
                       <div className="mt-3 space-y-2 p-3 bg-background/30 rounded border border-cyan-500/20">
-                        <p className="text-xs font-semibold flex items-center gap-1 text-cyan-400">
-                          <FolderOpen className="h-3 w-3" />
-                          Recursos criados:
-                        </p>
+                        <p className="text-xs font-semibold flex items-center gap-1 text-cyan-400"><FolderOpen className="h-3 w-3" />Recursos criados:</p>
                         <ul className="space-y-1 text-xs">
                           {message.resources.map((resource, idx) => (
-                            <li key={idx} className="flex items-start gap-2 text-muted-foreground">
-                              <span className="text-cyan-400 mt-0.5">•</span>
-                              <span>{resource}</span>
-                            </li>
+                            <li key={idx} className="flex items-start gap-2 text-muted-foreground"><span className="text-cyan-400 mt-0.5">•</span><span>{resource}</span></li>
                           ))}
                         </ul>
                       </div>
                     )}
-
                     {message.codeBlock && (
                       <div className="mt-3 relative">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <FileCode className="h-3 w-3" />
-                            Terraform
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleCopyCode(message.codeBlock!)}
-                            className="h-6 px-2 text-xs"
-                          >
-                            <Copy className="h-3 w-3 mr-1" />
-                            Copiar
-                          </Button>
+                          <span className="text-xs text-muted-foreground flex items-center gap-1"><FileCode className="h-3 w-3" />Terraform</span>
+                          <Button variant="ghost" size="sm" onClick={() => handleCopyCode(message.codeBlock!)} className="h-6 px-2 text-xs"><Copy className="h-3 w-3 mr-1" />Copiar</Button>
                         </div>
-                        <pre className="bg-background/50 rounded p-3 text-xs font-mono overflow-x-auto border border-cyan-500/20">
-                          {message.codeBlock}
-                        </pre>
+                        <pre className="bg-background/50 rounded p-3 text-xs font-mono overflow-x-auto border border-cyan-500/20">{message.codeBlock}</pre>
                       </div>
                     )}
-
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {message.timestamp.toLocaleTimeString('pt-BR', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">{message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                 </div>
               ))
             )}
-            
             {loading && (
               <div className="flex justify-start">
                 <div className="bg-background/50 border border-border/50 rounded-lg p-3">
@@ -295,23 +372,10 @@ resource "${activeProvider === 'aws' ? 'aws_vpc' : activeProvider === 'azure' ? 
             )}
           </div>
 
-          {/* Input */}
           <div className="p-4 border-t border-cyan-500/20">
             <div className="flex gap-2">
-              <Input
-                placeholder="Ex.: 'Criar VPC com 2 subnets públicas e 2 privadas' ou 'C:\infra\main.tf'"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                className="border-cyan-500/30 focus-visible:ring-cyan-500"
-              />
-              <Button 
-                onClick={handleSend} 
-                disabled={!input.trim() || loading}
-                className="bg-cyan-500 hover:bg-cyan-600"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
+              <Input placeholder="Ex.: 'Criar VPC com 2 subnets públicas e 2 privadas' ou 'C:\infra\main.tf'" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()} className="border-cyan-500/30 focus-visible:ring-cyan-500" />
+              <Button onClick={handleSend} disabled={!input.trim() || loading} className="bg-cyan-500 hover:bg-cyan-600"><Send className="h-4 w-4" /></Button>
             </div>
           </div>
         </div>
@@ -319,67 +383,28 @@ resource "${activeProvider === 'aws' ? 'aws_vpc' : activeProvider === 'azure' ? 
         {/* History Sidebar */}
         <div className="bg-background/30">
           <div className="p-3 border-b border-cyan-500/20 flex items-center justify-between">
-            <h3 className="text-sm font-semibold flex items-center gap-2 text-cyan-400">
-              <History className="h-4 w-4" />
-              Histórico
-            </h3>
+            <h3 className="text-sm font-semibold flex items-center gap-2 text-cyan-400"><History className="h-4 w-4" />Histórico</h3>
             {history.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClearHistory}
-                className="h-7 px-2 text-xs text-muted-foreground hover:text-destructive"
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
+              <Button variant="ghost" size="sm" onClick={handleClearHistory} className="h-7 px-2 text-xs text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></Button>
             )}
           </div>
-          
-          <div className="h-[400px] overflow-y-auto p-2 space-y-2">
+          <div className="h-[350px] overflow-y-auto p-2 space-y-2">
             {history.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-4">
                 <History className="h-8 w-8 text-muted-foreground/30 mb-2" />
-                <p className="text-xs text-muted-foreground">
-                  Nenhum histórico ainda
-                </p>
+                <p className="text-xs text-muted-foreground">Nenhum histórico ainda</p>
               </div>
             ) : (
               history.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleReuseHistory(item)}
-                  className="w-full text-left p-3 rounded-lg bg-background/50 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/30 transition-all duration-200 group"
-                >
+                <button key={item.id} onClick={() => handleReuseHistory(item)} className="w-full text-left p-3 rounded-lg bg-background/50 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/30 transition-all duration-200 group">
                   <div className="flex items-start justify-between gap-2">
-                    <Badge 
-                      variant="outline" 
-                      className="text-[10px] shrink-0"
-                      style={{ 
-                        borderColor: providerColors[item.provider], 
-                        color: providerColors[item.provider] 
-                      }}
-                    >
-                      {item.provider.toUpperCase()}
-                    </Badge>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-                      item.status === 'success' ? 'bg-green-500/20 text-green-400' :
-                      item.status === 'error' ? 'bg-red-500/20 text-red-400' :
-                      'bg-yellow-500/20 text-yellow-400'
-                    }`}>
+                    <Badge variant="outline" className="text-[10px] shrink-0" style={{ borderColor: providerColors[item.provider].hsl, color: providerColors[item.provider].hsl }}>{item.provider.toUpperCase()}</Badge>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${item.status === 'success' ? 'bg-green-500/20 text-green-400' : item.status === 'error' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
                       {item.status === 'success' ? '✓' : item.status === 'error' ? '✗' : '...'}
                     </span>
                   </div>
-                  <p className="text-xs text-foreground line-clamp-2 mt-2">
-                    {item.prompt}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground mt-1">
-                    {item.timestamp.toLocaleString('pt-BR', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </p>
+                  <p className="text-xs text-foreground line-clamp-2 mt-2">{item.prompt}</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">{item.timestamp.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</p>
                 </button>
               ))
             )}

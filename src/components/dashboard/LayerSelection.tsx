@@ -1,4 +1,4 @@
-import { Network, TrendingDown, BrainCircuit, Cloud } from "lucide-react";
+import { Network, TrendingDown, BrainCircuit, CloudCog } from "lucide-react";
 
 interface LayerSelectionProps {
   activeLayers: {
@@ -93,7 +93,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
             aria-label="Toggle Cloud Infrastructure"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <Cloud 
+              <CloudCog 
                 className={`
                   transition-all duration-300 drop-shadow-[0_0_15px_rgba(0,200,255,0.9)]
                   ${activeLayers.cloud 
