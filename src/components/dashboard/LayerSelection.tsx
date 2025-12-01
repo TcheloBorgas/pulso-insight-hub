@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { Network, TrendingDown, BrainCircuit, Cloud } from "lucide-react";
-import CloudDeployDialog from "./CloudDeployDialog";
 
 interface LayerSelectionProps {
   activeLayers: {
@@ -8,13 +6,12 @@ interface LayerSelectionProps {
     pulso: boolean;
     finops: boolean;
     data: boolean;
+    cloud: boolean;
   };
-  setActiveLayers: (layers: { preview: boolean; pulso: boolean; finops: boolean; data: boolean }) => void;
+  setActiveLayers: (layers: { preview: boolean; pulso: boolean; finops: boolean; data: boolean; cloud: boolean }) => void;
 }
 
 const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) => {
-  const [cloudDialogOpen, setCloudDialogOpen] = useState(false);
-
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
@@ -80,33 +77,55 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
           </div>
         </div>
 
-        {/* Deploy em Cloud */}
+        {/* Cloud Infrastructure */}
         <div className="flex flex-col items-center text-center space-y-4">
           <button
-            onClick={() => setCloudDialogOpen(true)}
-            className="group relative w-40 h-40 rounded-3xl transition-all duration-300 ease-out glass glass-hover shadow-lg hover:shadow-xl hover:scale-105 bg-gradient-to-br from-cyan-500/20 to-blue-600/10 border-2 border-cyan-500/40 hover:border-cyan-500"
-            aria-label="Deploy em Cloud"
+            onClick={() => setActiveLayers({ ...activeLayers, cloud: !activeLayers.cloud })}
+            className={`
+              group relative
+              w-40 h-40 rounded-3xl
+              transition-all duration-300 ease-out
+              ${activeLayers.cloud 
+                ? 'glass-strong bg-gradient-to-br from-cyan-500/80 to-blue-600/60 scale-105 border-2 border-cyan-500 shadow-[0_0_30px_rgba(0,200,255,0.5)]' 
+                : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105 bg-gradient-to-br from-cyan-500/20 to-blue-600/10 border-2 border-cyan-500/40'
+              }
+            `}
+            aria-label="Toggle Cloud Infrastructure"
           >
             <div className="absolute inset-0 flex items-center justify-center">
               <Cloud 
-                className="w-16 h-16 text-cyan-400 group-hover:text-white group-hover:w-18 group-hover:h-18 transition-all duration-300 drop-shadow-[0_0_15px_rgba(0,200,255,0.9)]"
+                className={`
+                  transition-all duration-300 drop-shadow-[0_0_15px_rgba(0,200,255,0.9)]
+                  ${activeLayers.cloud 
+                    ? 'w-20 h-20 text-white' 
+                    : 'w-16 h-16 text-cyan-400 group-hover:text-white group-hover:w-18 group-hover:h-18'
+                  }
+                `}
                 strokeWidth={2}
               />
             </div>
+            
+            {/* Pulse animation quando ativo */}
+            {activeLayers.cloud && (
+              <div className="absolute inset-0 rounded-3xl bg-cyan-500/30 animate-pulse" />
+            )}
           </button>
           
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-cyan-500/20 border-2 border-cyan-500"
               style={{ color: 'hsl(190 100% 65%)' }}>
-              Cloud Deploy
+              Cloud IaC
             </div>
             
-            <h3 className="text-xl font-bold text-foreground">
-              Deploy na Nuvem
+            <h3 className={`
+              text-xl font-bold transition-colors duration-300
+              ${activeLayers.cloud ? 'text-cyan-400' : 'text-foreground'}
+            `}>
+              Infraestrutura Cloud
             </h3>
             
             <p className="text-sm text-muted-foreground max-w-xs">
-              AWS, Azure ou GCP
+              Crie infra via chat · AWS, Azure, GCP
             </p>
           </div>
         </div>
@@ -218,7 +237,6 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
         </div>
       </div>
 
-      <CloudDeployDialog open={cloudDialogOpen} onOpenChange={setCloudDialogOpen} />
     </div>
   );
 };

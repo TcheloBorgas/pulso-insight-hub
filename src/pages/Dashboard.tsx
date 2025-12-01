@@ -8,6 +8,7 @@ import LogsPanel from "@/components/dashboard/LogsPanel";
 import LayerSelection from "@/components/dashboard/LayerSelection";
 import FinOpsChat from "@/components/dashboard/FinOpsChat";
 import DataChat from "@/components/dashboard/DataChat";
+import CloudChat from "@/components/dashboard/CloudChat";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Dashboard = () => {
     pulso: false,
     finops: false,
     data: false,
+    cloud: false,
   });
   const [showLogs, setShowLogs] = useState(false);
 
@@ -79,7 +81,7 @@ const Dashboard = () => {
 
           {/* Área de Chats */}
           <div className="flex-1 space-y-6">
-          {!activeLayers.preview && !activeLayers.pulso && !activeLayers.finops && !activeLayers.data && (
+          {!activeLayers.preview && !activeLayers.pulso && !activeLayers.finops && !activeLayers.data && !activeLayers.cloud && (
               <div className="glass-strong border-2 border-primary/30 rounded-2xl p-12 text-center shadow-[0_0_30px_rgba(0,255,255,0.2)] animate-fade-in">
                 <div className="max-w-2xl mx-auto space-y-6">
                   <div className="flex justify-center gap-6 mb-6">
@@ -275,6 +277,7 @@ const Dashboard = () => {
             )}
             {activeLayers.finops && <FinOpsChat />}
             {activeLayers.data && <DataChat />}
+            {activeLayers.cloud && <CloudChat />}
           </div>
         </div>
       </main>
