@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, Camera, Mail, Save, Lock, Eye, EyeOff, CreditCard, Crown } from "lucide-react";
+import { User, Camera, Mail, Save, Lock, Eye, EyeOff, CreditCard, Crown, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,10 +45,12 @@ const ProfileDialog = ({ open, onOpenChange }: ProfileDialogProps) => {
     name: savedProfile.name || "",
     email: savedProfile.email || "",
     avatarUrl: savedProfile.avatarUrl || "",
+    openaiApiKey: savedProfile.openaiApiKey || "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+  const [showOpenaiKey, setShowOpenaiKey] = useState(false);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,6 +117,7 @@ const ProfileDialog = ({ open, onOpenChange }: ProfileDialogProps) => {
         name: formData.name,
         email: formData.email,
         avatarUrl: formData.avatarUrl,
+        openaiApiKey: formData.openaiApiKey,
       };
       localStorage.setItem("userProfile", JSON.stringify(profileData));
       
@@ -257,6 +260,40 @@ const ProfileDialog = ({ open, onOpenChange }: ProfileDialogProps) => {
                   required
                   className="border-primary/20 focus:border-primary transition-colors"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* OpenAI API Key Section */}
+          <div className="glass rounded-lg p-5 space-y-4 border border-primary/10">
+            <div className="flex items-center gap-2 pb-2">
+              <Key className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-primary">Chave de API OpenAI</h3>
+            </div>
+            
+            <p className="text-xs text-muted-foreground pb-2">
+              Configure sua chave de API da OpenAI para recursos de IA
+            </p>
+
+            <div className="space-y-2">
+              <Label htmlFor="openaiApiKey" className="text-sm font-medium">API Key</Label>
+              <div className="relative">
+                <Input
+                  id="openaiApiKey"
+                  type={showOpenaiKey ? "text" : "password"}
+                  placeholder="sk-..."
+                  value={formData.openaiApiKey}
+                  onChange={(e) => setFormData({ ...formData, openaiApiKey: e.target.value })}
+                  className="border-primary/20 focus:border-primary transition-colors pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowOpenaiKey(!showOpenaiKey)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                  aria-label={showOpenaiKey ? "Ocultar chave" : "Mostrar chave"}
+                >
+                  {showOpenaiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
             </div>
           </div>
