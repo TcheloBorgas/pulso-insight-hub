@@ -25,7 +25,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
         {/* Pulso CSA */}
-        <div className="flex flex-col items-center text-center space-y-4">
+        <div className="flex flex-col items-center text-center space-y-4 opacity-0 animate-slide-up stagger-1">
           <button
             onClick={() => setActiveLayers({ ...activeLayers, pulso: !activeLayers.pulso })}
             className={`
@@ -78,7 +78,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
         </div>
 
         {/* Cloud Infrastructure */}
-        <div className="flex flex-col items-center text-center space-y-4">
+        <div className="flex flex-col items-center text-center space-y-4 opacity-0 animate-slide-up stagger-2">
           <button
             onClick={() => setActiveLayers({ ...activeLayers, cloud: !activeLayers.cloud })}
             className={`
@@ -131,7 +131,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
         </div>
 
         {/* Camada 5 - FinOps */}
-        <div className="flex flex-col items-center text-center space-y-4">
+        <div className="flex flex-col items-center text-center space-y-4 opacity-0 animate-slide-up stagger-3">
           <button
             onClick={() => setActiveLayers({ ...activeLayers, finops: !activeLayers.finops })}
             className={`
@@ -184,7 +184,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
         </div>
 
         {/* Camada 6 - Dados & IA */}
-        <div className="flex flex-col items-center text-center space-y-4">
+        <div className="flex flex-col items-center text-center space-y-4 opacity-0 animate-slide-up stagger-4">
           <button
             onClick={() => setActiveLayers({ ...activeLayers, data: !activeLayers.data })}
             className={`
