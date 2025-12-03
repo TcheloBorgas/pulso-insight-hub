@@ -161,124 +161,193 @@ resource "${activeProvider === 'aws' ? 'aws_vpc' : activeProvider === 'azure' ? 
     toast({ title: "Histórico limpo", description: "Todo o histórico foi removido" });
   };
 
-  const renderProviderButton = (provider: "aws" | "azure" | "gcp", icon: React.ReactNode, label: string) => (
-    <div className="space-y-2">
-      <div className="flex gap-2">
-        <Button
-          variant={activeProvider === provider ? "default" : "outline"}
-          onClick={() => setActiveProvider(provider)}
-          className={`flex-1 h-12 gap-2 ${activeProvider === provider ? providerColors[provider].bg + " text-white" : `border-2 ${providerColors[provider].border}/40 hover:${providerColors[provider].border}`}`}
+  const hasCredentials = (provider: "aws" | "azure" | "gcp") => {
+    const creds = credentials[provider];
+    return Object.values(creds).some(v => v && v.length > 0);
+  };
+
+  const providerInfo = {
+    aws: { 
+      name: "Amazon Web Services", 
+      gradient: "from-orange-500 to-yellow-500",
+      glow: "rgba(249, 115, 22, 0.4)",
+      border: "border-orange-500",
+      bg: "bg-orange-500"
+    },
+    azure: { 
+      name: "Microsoft Azure", 
+      gradient: "from-blue-500 to-cyan-400",
+      glow: "rgba(59, 130, 246, 0.4)",
+      border: "border-blue-500",
+      bg: "bg-blue-500"
+    },
+    gcp: { 
+      name: "Google Cloud Platform", 
+      gradient: "from-red-500 to-yellow-400",
+      glow: "rgba(239, 68, 68, 0.4)",
+      border: "border-red-500",
+      bg: "bg-red-500"
+    },
+  };
+
+  const renderProviderButton = (provider: "aws" | "azure" | "gcp", icon: React.ReactNode, label: string) => {
+    const info = providerInfo[provider];
+    const isActive = activeProvider === provider;
+    const isExpanded = expandedProvider === provider;
+    const configured = hasCredentials(provider);
+
+    return (
+      <div className="space-y-2">
+        <div 
+          className={`relative rounded-xl overflow-hidden transition-all duration-300 ${isActive ? `ring-2 ring-offset-2 ring-offset-background ${info.border}` : ''}`}
+          style={{ boxShadow: isActive ? `0 0 20px ${info.glow}` : 'none' }}
         >
-          {icon}
-          {label}
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setExpandedProvider(expandedProvider === provider ? null : provider)}
-          className={`h-12 w-12 border-2 ${providerColors[provider].border}/40`}
-        >
-          {expandedProvider === provider ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </Button>
+          <div 
+            className={`flex items-center gap-3 p-3 cursor-pointer transition-all duration-300 ${
+              isActive 
+                ? `bg-gradient-to-r ${info.gradient} text-white` 
+                : 'bg-background/50 hover:bg-background/80 border border-border/50'
+            }`}
+            onClick={() => setActiveProvider(provider)}
+          >
+            <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${isActive ? 'bg-white/20' : `bg-gradient-to-br ${info.gradient} bg-opacity-10`}`}>
+              <div className={isActive ? 'text-white' : providerColors[provider].text} style={{ fontSize: '1.75rem' }}>
+                {icon}
+              </div>
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className={`font-bold text-base ${isActive ? 'text-white' : 'text-foreground'}`}>{label}</span>
+                {configured && (
+                  <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-green-500'} animate-pulse`} title="Configurado" />
+                )}
+              </div>
+              <span className={`text-xs ${isActive ? 'text-white/80' : 'text-muted-foreground'}`}>{info.name}</span>
+            </div>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedProvider(isExpanded ? null : provider);
+              }}
+              className={`h-10 w-10 rounded-lg transition-all ${isActive ? 'hover:bg-white/20 text-white' : 'hover:bg-accent'}`}
+            >
+              <Key className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+            </Button>
+          </div>
+        </div>
+        
+        <Collapsible open={isExpanded}>
+          <CollapsibleContent className="animate-accordion-down">
+            <div className={`space-y-3 p-4 rounded-xl border-2 ${info.border}/30 bg-background/80 backdrop-blur-sm`}
+              style={{ boxShadow: `inset 0 0 20px ${info.glow.replace('0.4', '0.1')}` }}
+            >
+              {provider === "aws" && (
+                <>
+                  <div className="space-y-1">
+                    <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
+                    <Select value={credentials.aws.region} onValueChange={(v) => setCredentials({ ...credentials, aws: { ...credentials.aws, region: v } })}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Selecione a região" /></SelectTrigger>
+                      <SelectContent>{awsRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Account ID</Label>
+                    <Input className="h-9 text-sm" placeholder="123456789012" value={credentials.aws.accountId} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, accountId: e.target.value } })} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Access Key ID</Label>
+                    <Input className="h-9 text-sm" placeholder="AKIAIOSFODNN7EXAMPLE" value={credentials.aws.accessKeyId} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, accessKeyId: e.target.value } })} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Secret Access Key</Label>
+                    <div className="relative">
+                      <Input className="h-9 text-sm pr-10" type={showSecrets.aws ? "text" : "password"} placeholder="••••••••" value={credentials.aws.secretAccessKey} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, secretAccessKey: e.target.value } })} />
+                      <button type="button" onClick={() => setShowSecrets({ ...showSecrets, aws: !showSecrets.aws })} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                        {showSecrets.aws ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <Button className={`w-full h-9 bg-gradient-to-r ${info.gradient} hover:opacity-90 text-white font-medium`} onClick={() => handleSaveCredentials("aws")}>
+                    Salvar Credenciais AWS
+                  </Button>
+                </>
+              )}
+              {provider === "azure" && (
+                <>
+                  <div className="space-y-1">
+                    <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
+                    <Select value={credentials.azure.region} onValueChange={(v) => setCredentials({ ...credentials, azure: { ...credentials.azure, region: v } })}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Selecione a região" /></SelectTrigger>
+                      <SelectContent>{azureRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Subscription ID</Label>
+                    <Input className="h-9 text-sm" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.subscriptionId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, subscriptionId: e.target.value } })} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Tenant ID</Label>
+                    <Input className="h-9 text-sm" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.tenantId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, tenantId: e.target.value } })} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Client ID</Label>
+                    <Input className="h-9 text-sm" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.clientId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, clientId: e.target.value } })} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Client Secret</Label>
+                    <div className="relative">
+                      <Input className="h-9 text-sm pr-10" type={showSecrets.azure ? "text" : "password"} placeholder="••••••••" value={credentials.azure.clientSecret} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, clientSecret: e.target.value } })} />
+                      <button type="button" onClick={() => setShowSecrets({ ...showSecrets, azure: !showSecrets.azure })} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                        {showSecrets.azure ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <Button className={`w-full h-9 bg-gradient-to-r ${info.gradient} hover:opacity-90 text-white font-medium`} onClick={() => handleSaveCredentials("azure")}>
+                    Salvar Credenciais Azure
+                  </Button>
+                </>
+              )}
+              {provider === "gcp" && (
+                <>
+                  <div className="space-y-1">
+                    <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
+                    <Select value={credentials.gcp.region} onValueChange={(v) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, region: v } })}>
+                      <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Selecione a região" /></SelectTrigger>
+                      <SelectContent>{gcpRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Project ID</Label>
+                    <Input className="h-9 text-sm" placeholder="my-project-123" value={credentials.gcp.projectId} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, projectId: e.target.value } })} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Client Email</Label>
+                    <Input className="h-9 text-sm" placeholder="sa@project.iam.gserviceaccount.com" value={credentials.gcp.clientEmail} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, clientEmail: e.target.value } })} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Private Key</Label>
+                    <div className="relative">
+                      <Input className="h-9 text-sm pr-10" type={showSecrets.gcp ? "text" : "password"} placeholder="••••••••" value={credentials.gcp.privateKey} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, privateKey: e.target.value } })} />
+                      <button type="button" onClick={() => setShowSecrets({ ...showSecrets, gcp: !showSecrets.gcp })} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                        {showSecrets.gcp ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <Button className={`w-full h-9 bg-gradient-to-r ${info.gradient} hover:opacity-90 text-white font-medium`} onClick={() => handleSaveCredentials("gcp")}>
+                    Salvar Credenciais GCP
+                  </Button>
+                </>
+              )}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
-      
-      <Collapsible open={expandedProvider === provider}>
-        <CollapsibleContent className="space-y-3 p-4 rounded-lg border border-primary/20 bg-background/50">
-          {provider === "aws" && (
-            <>
-              <div className="space-y-1">
-                <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
-                <Select value={credentials.aws.region} onValueChange={(v) => setCredentials({ ...credentials, aws: { ...credentials.aws, region: v } })}>
-                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecione" /></SelectTrigger>
-                  <SelectContent>{awsRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Account ID</Label>
-                <Input className="h-8 text-xs" placeholder="123456789012" value={credentials.aws.accountId} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, accountId: e.target.value } })} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Access Key ID</Label>
-                <Input className="h-8 text-xs" placeholder="AKIAIOSFODNN7EXAMPLE" value={credentials.aws.accessKeyId} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, accessKeyId: e.target.value } })} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Secret Access Key</Label>
-                <div className="relative">
-                  <Input className="h-8 text-xs pr-8" type={showSecrets.aws ? "text" : "password"} placeholder="••••••••" value={credentials.aws.secretAccessKey} onChange={(e) => setCredentials({ ...credentials, aws: { ...credentials.aws, secretAccessKey: e.target.value } })} />
-                  <button type="button" onClick={() => setShowSecrets({ ...showSecrets, aws: !showSecrets.aws })} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
-                    {showSecrets.aws ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                  </button>
-                </div>
-              </div>
-              <Button size="sm" className="w-full h-8 text-xs bg-orange-500 hover:bg-orange-600" onClick={() => handleSaveCredentials("aws")}>Salvar AWS</Button>
-            </>
-          )}
-          {provider === "azure" && (
-            <>
-              <div className="space-y-1">
-                <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
-                <Select value={credentials.azure.region} onValueChange={(v) => setCredentials({ ...credentials, azure: { ...credentials.azure, region: v } })}>
-                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecione" /></SelectTrigger>
-                  <SelectContent>{azureRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Subscription ID</Label>
-                <Input className="h-8 text-xs" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.subscriptionId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, subscriptionId: e.target.value } })} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Tenant ID</Label>
-                <Input className="h-8 text-xs" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.tenantId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, tenantId: e.target.value } })} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Client ID</Label>
-                <Input className="h-8 text-xs" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value={credentials.azure.clientId} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, clientId: e.target.value } })} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Client Secret</Label>
-                <div className="relative">
-                  <Input className="h-8 text-xs pr-8" type={showSecrets.azure ? "text" : "password"} placeholder="••••••••" value={credentials.azure.clientSecret} onChange={(e) => setCredentials({ ...credentials, azure: { ...credentials.azure, clientSecret: e.target.value } })} />
-                  <button type="button" onClick={() => setShowSecrets({ ...showSecrets, azure: !showSecrets.azure })} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
-                    {showSecrets.azure ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                  </button>
-                </div>
-              </div>
-              <Button size="sm" className="w-full h-8 text-xs bg-blue-500 hover:bg-blue-600" onClick={() => handleSaveCredentials("azure")}>Salvar Azure</Button>
-            </>
-          )}
-          {provider === "gcp" && (
-            <>
-              <div className="space-y-1">
-                <Label className="text-xs flex items-center gap-1"><MapPin className="h-3 w-3" />Região</Label>
-                <Select value={credentials.gcp.region} onValueChange={(v) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, region: v } })}>
-                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Selecione" /></SelectTrigger>
-                  <SelectContent>{gcpRegions.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Project ID</Label>
-                <Input className="h-8 text-xs" placeholder="my-project-123" value={credentials.gcp.projectId} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, projectId: e.target.value } })} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs flex items-center gap-1"><Key className="h-3 w-3" />Client Email</Label>
-                <Input className="h-8 text-xs" placeholder="sa@project.iam.gserviceaccount.com" value={credentials.gcp.clientEmail} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, clientEmail: e.target.value } })} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Private Key</Label>
-                <div className="relative">
-                  <Input className="h-8 text-xs pr-8" type={showSecrets.gcp ? "text" : "password"} placeholder="••••••••" value={credentials.gcp.privateKey} onChange={(e) => setCredentials({ ...credentials, gcp: { ...credentials.gcp, privateKey: e.target.value } })} />
-                  <button type="button" onClick={() => setShowSecrets({ ...showSecrets, gcp: !showSecrets.gcp })} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary">
-                    {showSecrets.gcp ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                  </button>
-                </div>
-              </div>
-              <Button size="sm" className="w-full h-8 text-xs bg-red-500 hover:bg-red-600" onClick={() => handleSaveCredentials("gcp")}>Salvar GCP</Button>
-            </>
-          )}
-        </CollapsibleContent>
-      </Collapsible>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="glass-strong rounded-2xl overflow-hidden border-2 border-cyan-500/30" style={{ boxShadow: '0 0 30px rgba(0, 200, 255, 0.2)' }}>
