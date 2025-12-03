@@ -72,7 +72,7 @@ const Dashboard = () => {
       <main className="flex-1 container mx-auto p-4 lg:p-6 relative z-10">
         <div className="flex flex-col gap-6">
           {/* Seleção de Camadas */}
-          <div className="w-full">
+          <div className="w-full animate-slide-down">
             <LayerSelection 
               activeLayers={activeLayers}
               setActiveLayers={setActiveLayers}
@@ -82,7 +82,7 @@ const Dashboard = () => {
           {/* Área de Chats */}
           <div className="flex-1 space-y-6">
           {!activeLayers.preview && !activeLayers.pulso && !activeLayers.finops && !activeLayers.data && !activeLayers.cloud && (
-              <div className="glass-strong border-2 border-primary/30 rounded-2xl p-12 text-center shadow-[0_0_30px_rgba(0,255,255,0.2)] animate-fade-in">
+              <div className="glass-strong border-2 border-primary/30 rounded-2xl p-12 text-center shadow-[0_0_30px_rgba(0,255,255,0.2)] animate-scale-in">
                 <div className="max-w-2xl mx-auto space-y-6">
                   <div className="flex justify-center gap-6 mb-6">
                     <div className="relative group">
@@ -115,7 +115,7 @@ const Dashboard = () => {
             )}
 
             {activeLayers.pulso && (
-              <div className="space-y-4">
+              <div className="space-y-4 animate-slide-up">
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
@@ -275,9 +275,9 @@ const Dashboard = () => {
                 <PromptPanel />
               </div>
             )}
-            {activeLayers.finops && <FinOpsChat />}
-            {activeLayers.data && <DataChat />}
-            {activeLayers.cloud && <CloudChat />}
+            {activeLayers.finops && <div className="animate-slide-up"><FinOpsChat /></div>}
+            {activeLayers.data && <div className="animate-slide-up"><DataChat /></div>}
+            {activeLayers.cloud && <div className="animate-slide-up"><CloudChat /></div>}
           </div>
         </div>
       </main>
