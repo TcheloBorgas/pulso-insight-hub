@@ -1,4 +1,4 @@
-import { LogOut, User, UserCircle, RefreshCw, Users, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { LogOut, User, UserCircle, RefreshCw, Users } from "lucide-react";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -37,9 +37,7 @@ const DashboardHeader = ({ activeLayers, setActiveLayers, showLayerSelection = t
   const { toast } = useToast();
   const [profileOpen, setProfileOpen] = useState(false);
   const [currentProfile, setCurrentProfile] = useState<{ name: string; description: string } | null>(null);
-  const [zoom, setZoom] = useState(100);
 
-  const isAnyLayerActive = activeLayers?.preview || activeLayers?.pulso || activeLayers?.finops || activeLayers?.data || activeLayers?.cloud;
 
   useEffect(() => {
     const profile = localStorage.getItem("currentProfile");
@@ -78,9 +76,6 @@ const DashboardHeader = ({ activeLayers, setActiveLayers, showLayerSelection = t
     navigate("/auth");
   };
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 10, 200));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 10, 50));
-  const handleZoomReset = () => setZoom(100);
 
   return (
     <>
@@ -96,36 +91,6 @@ const DashboardHeader = ({ activeLayers, setActiveLayers, showLayerSelection = t
             )}
           </div>
 
-          {/* Zoom Controls - só aparece quando nenhuma camada está ativa */}
-          {showLayerSelection && !isAnyLayerActive && (
-            <div className="flex items-center gap-1 glass rounded-lg px-2 py-1 border border-primary/20">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 hover:bg-primary/10"
-                onClick={handleZoomOut}
-              >
-                <ZoomOut className="h-4 w-4 text-muted-foreground" />
-              </Button>
-              <span className="text-xs font-mono text-muted-foreground min-w-[3rem] text-center">{zoom}%</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 hover:bg-primary/10"
-                onClick={handleZoomIn}
-              >
-                <ZoomIn className="h-4 w-4 text-muted-foreground" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 hover:bg-primary/10"
-                onClick={handleZoomReset}
-              >
-                <RotateCcw className="h-3.5 w-3.5 text-muted-foreground" />
-              </Button>
-            </div>
-          )}
           
           <div className="flex items-center gap-2">
             <DropdownMenu>
