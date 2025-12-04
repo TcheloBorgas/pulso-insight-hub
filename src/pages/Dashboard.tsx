@@ -65,111 +65,18 @@ const Dashboard = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-dataAi/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
-      <div className="glass-strong border-b relative z-10">
-        <DashboardHeader />
+      <div className="relative z-10">
+        <DashboardHeader 
+          activeLayers={activeLayers}
+          setActiveLayers={setActiveLayers}
+        />
       </div>
       
       <main className="flex-1 container mx-auto p-4 lg:p-6 relative z-10">
         <div className="flex flex-col gap-6">
-          {/* Seleção de Camadas */}
-          <div className="w-full animate-slide-down">
-            <LayerSelection 
-              activeLayers={activeLayers}
-              setActiveLayers={setActiveLayers}
-            />
-          </div>
 
           {/* Área de Chats */}
           <div className="flex-1 space-y-6">
-          {!activeLayers.preview && !activeLayers.pulso && !activeLayers.finops && !activeLayers.data && !activeLayers.cloud && (
-              <div className="animate-fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Pulso CSA Card */}
-                  <button
-                    onClick={() => setActiveLayers(prev => ({ ...prev, pulso: true }))}
-                    className="group relative glass-strong border border-primary/20 rounded-xl p-6 text-left transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_25px_rgba(0,255,255,0.15)] hover:-translate-y-1"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative space-y-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <Monitor className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground mb-1">Pulso CSA</h3>
-                        <p className="text-sm text-muted-foreground">Gere blueprints e desenvolva aplicações</p>
-                      </div>
-                      <div className="flex items-center text-xs text-primary/70 group-hover:text-primary transition-colors">
-                        <span>Iniciar</span>
-                        <Zap className="h-3 w-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* FinOps Card */}
-                  <button
-                    onClick={() => setActiveLayers(prev => ({ ...prev, finops: true }))}
-                    className="group relative glass-strong border border-finops/20 rounded-xl p-6 text-left transition-all duration-300 hover:border-finops/50 hover:shadow-[0_0_25px_rgba(0,255,153,0.15)] hover:-translate-y-1"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-finops/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative space-y-4">
-                      <div className="w-12 h-12 rounded-lg bg-finops/10 flex items-center justify-center group-hover:bg-finops/20 transition-colors">
-                        <Activity className="h-6 w-6 text-finops" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground mb-1">FinOps</h3>
-                        <p className="text-sm text-muted-foreground">Otimize custos de infraestrutura</p>
-                      </div>
-                      <div className="flex items-center text-xs text-finops/70 group-hover:text-finops transition-colors">
-                        <span>Iniciar</span>
-                        <Zap className="h-3 w-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* Analytics Card */}
-                  <button
-                    onClick={() => setActiveLayers(prev => ({ ...prev, data: true }))}
-                    className="group relative glass-strong border border-dataAi/20 rounded-xl p-6 text-left transition-all duration-300 hover:border-dataAi/50 hover:shadow-[0_0_25px_rgba(191,0,255,0.15)] hover:-translate-y-1"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-dataAi/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative space-y-4">
-                      <div className="w-12 h-12 rounded-lg bg-dataAi/10 flex items-center justify-center group-hover:bg-dataAi/20 transition-colors">
-                        <Database className="h-6 w-6 text-dataAi" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground mb-1">Analytics</h3>
-                        <p className="text-sm text-muted-foreground">Análise de dados com inteligência artificial</p>
-                      </div>
-                      <div className="flex items-center text-xs text-dataAi/70 group-hover:text-dataAi transition-colors">
-                        <span>Iniciar</span>
-                        <Zap className="h-3 w-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* Cloud Deploy Card */}
-                  <button
-                    onClick={() => setActiveLayers(prev => ({ ...prev, cloud: true }))}
-                    className="group relative glass-strong border border-primary/20 rounded-xl p-6 text-left transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_25px_rgba(0,255,255,0.15)] hover:-translate-y-1"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative space-y-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <Zap className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground mb-1">Cloud Deploy</h3>
-                        <p className="text-sm text-muted-foreground">Deploy em AWS, Azure ou GCP</p>
-                      </div>
-                      <div className="flex items-center text-xs text-primary/70 group-hover:text-primary transition-colors">
-                        <span>Iniciar</span>
-                        <Zap className="h-3 w-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
 
             {activeLayers.pulso && (
               <div className="space-y-4 animate-slide-up">
