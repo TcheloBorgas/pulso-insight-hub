@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import ProfileManagement from "@/components/dashboard/ProfileManagement";
 import { Profile } from "@/components/dashboard/ProfileManagement";
 import { useToast } from "@/hooks/use-toast";
+import ThemeSelector from "@/components/ThemeSelector";
 
 const ProfileSelection = () => {
   const navigate = useNavigate();
@@ -69,16 +70,19 @@ const ProfileSelection = () => {
       {/* Header */}
       <div className="glass-strong relative z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-primary">Pulso Tech</h1>
-          <Button
+          <h1 className="text-2xl font-bold text-primary">Pulso</h1>
+          <div className="flex items-center gap-2">
+            <ThemeSelector />
+            <Button
             onClick={handleLogout}
             variant="outline"
             size="sm"
             className="gap-2 border-destructive/30 hover:border-destructive hover:bg-destructive/10 text-destructive"
           >
-            <LogOut className="h-4 w-4" />
-            Sair
-          </Button>
+              <LogOut className="h-4 w-4" />
+              Sair
+            </Button>
+          </div>
         </div>
       </div>
 

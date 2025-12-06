@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ProfileDialog from "./ProfileDialog";
 import LayerSelection from "./LayerSelection";
+import ThemeSelector from "@/components/ThemeSelector";
 
 interface DashboardHeaderProps {
   activeLayers?: {
@@ -82,7 +83,7 @@ const DashboardHeader = ({ activeLayers, setActiveLayers, showLayerSelection = t
       <header className="sticky top-0 z-50 w-full backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-down">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold neon-text transition-all duration-300 hover:scale-105" style={{ color: 'hsl(180 100% 65%)' }}>Pulso Tech</h1>
+            <h1 className="text-xl font-bold neon-text transition-all duration-300 hover:scale-105 text-primary">Pulso</h1>
             {currentProfile && (
               <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-lg glass border border-primary/30">
                 <Users className="h-3.5 w-3.5 text-primary" />
@@ -93,6 +94,7 @@ const DashboardHeader = ({ activeLayers, setActiveLayers, showLayerSelection = t
 
           
           <div className="flex items-center gap-2">
+            <ThemeSelector />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="relative group">

@@ -1,31 +1,32 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Activity, Database, Zap, ArrowRight, Cloud } from "lucide-react";
+import { ArrowRight, Workflow, CloudCog, TrendingDown, Brain } from "lucide-react";
+import ThemeSelector from "@/components/ThemeSelector";
 
 const Index = () => {
   const navigate = useNavigate();
 
   const features = [
     {
-      icon: Zap,
+      icon: Workflow,
       title: "Pulso CSA",
       description: "Gere código completo com IA",
       color: "primary",
     },
     {
-      icon: Cloud,
+      icon: CloudCog,
       title: "Cloud IaC",
       description: "Infraestrutura como código",
       color: "primary",
     },
     {
-      icon: Activity,
+      icon: TrendingDown,
       title: "FinOps",
       description: "Otimize custos na nuvem",
       color: "finops",
     },
     {
-      icon: Database,
+      icon: Brain,
       title: "Data AI",
       description: "Explore dados com IA",
       color: "dataAi",
@@ -44,7 +45,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 opacity-[0.02]"
           style={{
-            backgroundImage: `linear-gradient(rgba(0,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.3) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)`,
             backgroundSize: '60px 60px'
           }}
         />
@@ -52,15 +53,18 @@ const Index = () => {
 
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-6 lg:px-12 py-5">
-        <span className="text-xl font-bold text-foreground">Pulso Tech</span>
+        <div /> {/* Spacer */}
         
-        <Button 
-          variant="outline"
-          onClick={() => navigate("/auth?mode=login")}
-          className="border-primary/40 hover:border-primary hover:bg-primary/10 text-foreground"
-        >
-          Entrar
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeSelector />
+          <Button 
+            variant="outline"
+            onClick={() => navigate("/auth?mode=login")}
+            className="border-primary/40 hover:border-primary hover:bg-primary/10 text-foreground"
+          >
+            Entrar
+          </Button>
+        </div>
       </header>
 
       {/* Hero Section - Centered */}
@@ -70,13 +74,13 @@ const Index = () => {
           <h1 
             className="text-5xl md:text-7xl lg:text-8xl font-black mb-4 animate-fade-in tracking-tight"
             style={{ 
-              background: 'linear-gradient(135deg, hsl(180 100% 70%) 0%, hsl(180 100% 50%) 50%, hsl(150 100% 60%) 100%)',
+              background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-deep)) 50%, hsl(var(--finops)) 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}
           >
-            Pulso Tech
+            Pulso
           </h1>
 
           {/* Subtitle */}
@@ -89,9 +93,9 @@ const Index = () => {
             {features.map((feature) => (
               <div 
                 key={feature.title}
-                className="flex flex-col items-center p-4 rounded-xl bg-card/20 backdrop-blur-sm"
+                className="flex flex-col items-center p-4 rounded-xl bg-card/20 backdrop-blur-sm border border-border/30 hover:border-primary/50 transition-all duration-300"
               >
-                <feature.icon className={`w-6 h-6 text-${feature.color} mb-2`} strokeWidth={1.5} />
+                <feature.icon className={`w-8 h-8 text-${feature.color} mb-2`} strokeWidth={1.5} />
                 <span className={`text-sm font-semibold text-${feature.color}`}>{feature.title}</span>
                 <span className="text-xs text-muted-foreground text-center mt-1">{feature.description}</span>
               </div>
@@ -103,7 +107,7 @@ const Index = () => {
             <Button 
               size="lg"
               onClick={() => navigate("/auth?mode=signup")}
-              className="group relative px-8 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-primary-deep hover:from-primary-light hover:to-primary text-background rounded-xl transition-all duration-300 hover:scale-105 shadow-[0_0_40px_rgba(0,255,255,0.3)] hover:shadow-[0_0_60px_rgba(0,255,255,0.5)]"
+              className="group relative px-8 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-primary-deep hover:from-primary-light hover:to-primary text-primary-foreground rounded-xl transition-all duration-300 hover:scale-105 shadow-[0_0_40px_hsl(var(--primary)/0.3)] hover:shadow-[0_0_60px_hsl(var(--primary)/0.5)]"
             >
               <span>Começar Agora</span>
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
