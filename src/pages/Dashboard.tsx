@@ -77,14 +77,6 @@ const Dashboard = () => {
 
           {/* Área de Chats */}
           <div className="flex-1 space-y-6">
-            {/* Boas-vindas quando nenhuma camada está ativa */}
-            {!activeLayers.pulso && !activeLayers.finops && !activeLayers.data && !activeLayers.cloud && (
-              <div className="flex flex-col items-center justify-center py-16 animate-fade-in">
-                <p className="text-muted-foreground/60 text-sm tracking-wide">
-                  Selecione uma camada acima para começar
-                </p>
-              </div>
-            )}
 
             {activeLayers.pulso && (
               <div className="space-y-4 animate-slide-up">
