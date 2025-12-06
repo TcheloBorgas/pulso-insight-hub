@@ -67,9 +67,9 @@ const ProfileSelection = () => {
       </div>
 
       {/* Header */}
-      <div className="glass-strong border-b relative z-10">
+      <div className="glass-strong relative z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-primary">Pulso CSA</h1>
+          <h1 className="text-2xl font-bold text-primary">Pulso Tech</h1>
           <Button
             onClick={handleLogout}
             variant="outline"
