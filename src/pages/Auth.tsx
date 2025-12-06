@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { z } from "zod";
+import ThemeSelector from "@/components/ThemeSelector";
 
 const profileSchema = z.object({
   name: z.string()
@@ -203,6 +204,11 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+      {/* Theme Selector */}
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeSelector />
+      </div>
+
       {/* Background animated elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
@@ -212,7 +218,7 @@ const Auth = () => {
       <div className="w-full max-w-md relative z-10 animate-fade-in">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2 neon-text" style={{ 
-            background: 'linear-gradient(135deg, hsl(180 100% 70%) 0%, hsl(150 100% 65%) 100%)',
+            background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--finops)) 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text'

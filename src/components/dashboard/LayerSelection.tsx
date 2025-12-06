@@ -1,4 +1,4 @@
-import { Network, TrendingDown, BrainCircuit, CloudCog } from "lucide-react";
+import { Workflow, TrendingDown, Brain, CloudCog } from "lucide-react";
 
 interface LayerSelectionProps {
   activeLayers: {
@@ -15,7 +15,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold neon-text" style={{ color: 'hsl(180 100% 70%)' }}>
+        <h2 className="text-2xl font-bold neon-text text-primary">
           Camadas Disponíveis
         </h2>
         <p className="text-sm text-foreground/80">
@@ -33,22 +33,22 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               w-40 h-40 rounded-3xl
               transition-all duration-300 ease-out
               ${activeLayers.pulso 
-                ? 'glass-strong bg-gradient-to-br from-primary/80 to-primary-deep/60 scale-105 border-2 border-primary shadow-[0_0_30px_rgba(0,255,255,0.5)]' 
+                ? 'glass-strong bg-gradient-to-br from-primary/80 to-primary-deep/60 scale-105 border-2 border-primary shadow-[0_0_30px_hsl(var(--primary)/0.5)]' 
                 : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105 bg-gradient-to-br from-primary/20 to-primary-deep/10 border-2 border-primary/40'
               }
             `}
             aria-label="Toggle Pulso CSA"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <Network 
+              <Workflow 
                 className={`
-                  transition-all duration-300 drop-shadow-[0_0_15px_rgba(0,255,255,0.9)]
+                  transition-all duration-300 drop-shadow-[0_0_15px_hsl(var(--primary)/0.9)]
                   ${activeLayers.pulso 
-                    ? 'w-20 h-20 text-white' 
-                    : 'w-16 h-16 text-primary group-hover:text-white group-hover:w-18 group-hover:h-18'
+                    ? 'w-20 h-20 text-primary-foreground' 
+                    : 'w-16 h-16 text-primary group-hover:text-primary-foreground group-hover:w-18 group-hover:h-18'
                   }
                 `}
-                strokeWidth={2}
+                strokeWidth={1.5}
               />
             </div>
             
@@ -59,8 +59,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
           </button>
           
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-primary/20 border-2 border-primary"
-              style={{ color: 'hsl(180 100% 65%)' }}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-primary/20 border-2 border-primary text-primary">
               Pulso CSA
             </div>
             
@@ -86,8 +85,8 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               w-40 h-40 rounded-3xl
               transition-all duration-300 ease-out
               ${activeLayers.cloud 
-                ? 'glass-strong bg-gradient-to-br from-cyan-500/80 to-blue-600/60 scale-105 border-2 border-cyan-500 shadow-[0_0_30px_rgba(0,200,255,0.5)]' 
-                : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105 bg-gradient-to-br from-cyan-500/20 to-blue-600/10 border-2 border-cyan-500/40'
+                ? 'glass-strong bg-gradient-to-br from-secondary/80 to-accent/60 scale-105 border-2 border-secondary shadow-[0_0_30px_hsl(var(--secondary)/0.5)]' 
+                : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105 bg-gradient-to-br from-secondary/20 to-accent/10 border-2 border-secondary/40'
               }
             `}
             aria-label="Toggle Cloud Infrastructure"
@@ -95,31 +94,30 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
             <div className="absolute inset-0 flex items-center justify-center">
               <CloudCog 
                 className={`
-                  transition-all duration-300 drop-shadow-[0_0_15px_rgba(0,200,255,0.9)]
+                  transition-all duration-300 drop-shadow-[0_0_15px_hsl(var(--secondary)/0.9)]
                   ${activeLayers.cloud 
-                    ? 'w-20 h-20 text-white' 
-                    : 'w-16 h-16 text-cyan-400 group-hover:text-white group-hover:w-18 group-hover:h-18'
+                    ? 'w-20 h-20 text-secondary-foreground' 
+                    : 'w-16 h-16 text-secondary group-hover:text-secondary-foreground group-hover:w-18 group-hover:h-18'
                   }
                 `}
-                strokeWidth={2}
+                strokeWidth={1.5}
               />
             </div>
             
             {/* Pulse animation quando ativo */}
             {activeLayers.cloud && (
-              <div className="absolute inset-0 rounded-3xl bg-cyan-500/30 animate-pulse" />
+              <div className="absolute inset-0 rounded-3xl bg-secondary/30 animate-pulse" />
             )}
           </button>
           
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-cyan-500/20 border-2 border-cyan-500"
-              style={{ color: 'hsl(190 100% 65%)' }}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-secondary/20 border-2 border-secondary text-secondary">
               Cloud IaC
             </div>
             
             <h3 className={`
               text-xl font-bold transition-colors duration-300
-              ${activeLayers.cloud ? 'text-cyan-400' : 'text-foreground'}
+              ${activeLayers.cloud ? 'text-secondary' : 'text-foreground'}
             `}>
               Infraestrutura Cloud
             </h3>
@@ -139,7 +137,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               w-40 h-40 rounded-3xl
               transition-all duration-300 ease-out
               ${activeLayers.finops 
-                ? 'glass-strong bg-gradient-to-br from-finops/80 to-success/60 scale-105 border-2 border-finops shadow-[0_0_30px_rgba(0,255,153,0.5)]' 
+                ? 'glass-strong bg-gradient-to-br from-finops/80 to-success/60 scale-105 border-2 border-finops shadow-[0_0_30px_hsl(var(--finops)/0.5)]' 
                 : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105 bg-gradient-to-br from-finops/20 to-success/10 border-2 border-finops/40'
               }
             `}
@@ -148,13 +146,13 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
             <div className="absolute inset-0 flex items-center justify-center">
               <TrendingDown 
                 className={`
-                  transition-all duration-300 drop-shadow-[0_0_15px_rgba(0,255,153,0.9)]
+                  transition-all duration-300 drop-shadow-[0_0_15px_hsl(var(--finops)/0.9)]
                   ${activeLayers.finops 
-                    ? 'w-20 h-20 text-white' 
-                    : 'w-16 h-16 text-finops group-hover:text-white group-hover:w-18 group-hover:h-18'
+                    ? 'w-20 h-20 text-finops-foreground' 
+                    : 'w-16 h-16 text-finops group-hover:text-finops-foreground group-hover:w-18 group-hover:h-18'
                   }
                 `}
-                strokeWidth={2}
+                strokeWidth={1.5}
               />
             </div>
             
@@ -165,8 +163,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
           </button>
           
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-finops/20 border-2 border-finops"
-              style={{ color: 'hsl(150 100% 65%)' }}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-finops/20 border-2 border-finops text-finops">
               FinOps
             </div>
             
@@ -192,22 +189,22 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
               w-40 h-40 rounded-3xl
               transition-all duration-300 ease-out
               ${activeLayers.data 
-                ? 'glass-strong bg-gradient-to-br from-dataAi/80 to-secondary/60 scale-105 border-2 border-dataAi shadow-[0_0_30px_rgba(191,0,255,0.5)]' 
-                : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105 bg-gradient-to-br from-dataAi/20 to-secondary/10 border-2 border-dataAi/40'
+                ? 'glass-strong bg-gradient-to-br from-dataAi/80 to-accent/60 scale-105 border-2 border-dataAi shadow-[0_0_30px_hsl(var(--data-ai)/0.5)]' 
+                : 'glass glass-hover shadow-lg hover:shadow-xl hover:scale-105 bg-gradient-to-br from-dataAi/20 to-accent/10 border-2 border-dataAi/40'
               }
             `}
             aria-label="Toggle Camada 6 - Dados & IA"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <BrainCircuit 
+              <Brain 
                 className={`
-                  transition-all duration-300 drop-shadow-[0_0_15px_rgba(191,0,255,0.9)]
+                  transition-all duration-300 drop-shadow-[0_0_15px_hsl(var(--data-ai)/0.9)]
                   ${activeLayers.data 
-                    ? 'w-20 h-20 text-white' 
-                    : 'w-16 h-16 text-dataAi group-hover:text-white group-hover:w-18 group-hover:h-18'
+                    ? 'w-20 h-20 text-data-ai-foreground' 
+                    : 'w-16 h-16 text-dataAi group-hover:text-data-ai-foreground group-hover:w-18 group-hover:h-18'
                   }
                 `}
-                strokeWidth={2}
+                strokeWidth={1.5}
               />
             </div>
             
@@ -218,8 +215,7 @@ const LayerSelection = ({ activeLayers, setActiveLayers }: LayerSelectionProps) 
           </button>
           
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-dataAi/20 border-2 border-dataAi"
-              style={{ color: 'hsl(270 100% 80%)' }}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 bg-dataAi/20 border-2 border-dataAi text-dataAi">
               Analytics
             </div>
             
