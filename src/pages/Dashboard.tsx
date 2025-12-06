@@ -247,9 +247,9 @@ const Dashboard = () => {
                 <PromptPanel />
               </div>
             )}
+            {activeLayers.cloud && <div className="animate-slide-up"><CloudChat /></div>}
             {activeLayers.finops && <div className="animate-slide-up"><FinOpsChat /></div>}
             {activeLayers.data && <div className="animate-slide-up"><DataChat /></div>}
-            {activeLayers.cloud && <div className="animate-slide-up"><CloudChat /></div>}
           </div>
         </div>
       </main>
