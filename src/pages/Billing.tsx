@@ -10,30 +10,10 @@ import {
   Zap,
   Crown,
   Star,
-  Sparkles,
-  ExternalLink
+  Sparkles
 } from "lucide-react";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
-
-// Stripe Payment Links para planos mensais
-const stripePaymentLinks = {
-  basic: {
-    withoutKey: "https://buy.stripe.com/test_bJe00jdAl89e4fFcim8Zq08", // $29.99
-    withKey: "https://buy.stripe.com/test_fZu6oHao989e13tequ8Zq09"     // $24.99
-  },
-  plus: {
-    withoutKey: "https://buy.stripe.com/test_eVq14n67T6164fF96a8Zq0a", // $44.77
-    withKey: "https://buy.stripe.com/test_cNibJ153P1KQ3bBdmq8Zq0b"     // $34.77
-  },
-  pro: {
-    withoutKey: "https://buy.stripe.com/test_3cI28rgMx3SY27xgyC8Zq0c", // $59.77
-    withKey: "https://buy.stripe.com/test_fZu8wPeEp89ecMb3LQ8Zq0d"     // $49.77
-  },
-  elite: {
-    withoutKey: "https://buy.stripe.com/test_dRmcN5bsdcpu6nN4PU8Zq0e", // $69.77
-    withKey: "https://buy.stripe.com/test_bJe28r53PblqfYn0zE8Zq0f"     // $57.77
-  }
-};
+import CheckoutModal from "@/components/billing/CheckoutModal";
 
 const plans = [
   {
@@ -110,23 +90,37 @@ const plans = [
   }
 ];
 
+interface SelectedPlan {
+  id: string;
+  name: string;
+  price: number;
+  billingCycle: "monthly" | "yearly";
+  hasDiscount: boolean;
+}
+
 const Billing = () => {
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [hasOpenAIKey, setHasOpenAIKey] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null);
 
   const handleSelectPlan = (planId: string) => {
-    if (billingCycle === "yearly") {
-      // Planos anuais ainda não disponíveis no Stripe
-      alert("Planos anuais serão disponibilizados em breve. Por favor, selecione o plano mensal.");
-      return;
-    }
+    const plan = plans.find(p => p.id === planId);
+    if (!plan) return;
 
-    const planLinks = stripePaymentLinks[planId as keyof typeof stripePaymentLinks];
-    if (planLinks) {
-      const link = hasOpenAIKey ? planLinks.withKey : planLinks.withoutKey;
-      window.open(link, "_blank");
-    }
+    const price = billingCycle === "monthly" 
+      ? (hasOpenAIKey ? plan.priceMonthlyWithAPI : plan.priceMonthly)
+      : (hasOpenAIKey ? plan.priceYearlyWithAPI : plan.priceYearly);
+
+    setSelectedPlan({
+      id: plan.id,
+      name: plan.name,
+      price,
+      billingCycle,
+      hasDiscount: hasOpenAIKey || billingCycle === "yearly"
+    });
+    setIsCheckoutOpen(true);
   };
 
   return (
@@ -203,11 +197,6 @@ const Billing = () => {
               </span>
             </Button>
 
-            {billingCycle === "yearly" && (
-              <p className="text-sm text-muted-foreground text-center animate-fade-in">
-                ⚠️ Planos anuais serão disponibilizados em breve. Atualmente apenas planos mensais estão disponíveis.
-              </p>
-            )}
           </div>
 
           {/* Plans Grid */}
@@ -279,14 +268,8 @@ const Billing = () => {
                           ? 'border-primary bg-gradient-to-r from-primary/80 to-primary-deep/60 shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]'
                           : 'border-primary/40 hover:border-primary/60'
                       }`}
-                      disabled={billingCycle === "yearly"}
                     >
-                      {billingCycle === "yearly" ? "Em Breve" : (
-                        <>
-                          Assinar Plano
-                          <ExternalLink className="h-4 w-4" />
-                        </>
-                      )}
+                      Assinar Plano
                     </Button>
                   </div>
                 </Card>
@@ -303,6 +286,12 @@ const Billing = () => {
           </div>
         </div>
       </main>
+
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        plan={selectedPlan}
+      />
     </div>
   );
 };
