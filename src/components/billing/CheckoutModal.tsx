@@ -8,15 +8,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { 
   CreditCard, 
   Lock, 
   Check,
   Loader2,
-  X
+  ExternalLink
 } from "lucide-react";
 import { toast } from "sonner";
+
+const SUPABASE_URL = "https://mcjgpkbxjthkqvmgpzba.supabase.co";
 
 interface Plan {
   id: string;
@@ -34,54 +35,63 @@ interface CheckoutModalProps {
 
 const CheckoutModal = ({ isOpen, onClose, plan }: CheckoutModalProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvc, setCvc] = useState("");
   const [cardName, setCardName] = useState("");
   const [email, setEmail] = useState("");
-
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    const matches = v.match(/\d{4,16}/g);
-    const match = (matches && matches[0]) || "";
-    const parts = [];
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
-    }
-    return parts.length ? parts.join(" ") : value;
-  };
-
-  const formatExpiry = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    if (v.length >= 2) {
-      return v.substring(0, 2) + "/" + v.substring(2, 4);
-    }
-    return v;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!cardNumber || !expiry || !cvc || !cardName || !email) {
+    if (!cardName || !email) {
       toast.error("Por favor, preencha todos os campos");
+      return;
+    }
+
+    if (!plan) {
+      toast.error("Plano não selecionado");
       return;
     }
 
     setIsProcessing(true);
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planId: plan.id,
+          billingCycle: plan.billingCycle,
+          hasApiKey: plan.hasDiscount,
+          email,
+          cardholderName: cardName,
+        }),
+      });
 
-    setIsProcessing(false);
-    toast.success(`Assinatura do plano ${plan?.name} realizada com sucesso!`);
-    onClose();
-    
-    // Reset form
-    setCardNumber("");
-    setExpiry("");
-    setCvc("");
-    setCardName("");
-    setEmail("");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao criar sessão de checkout');
+      }
+
+      if (data?.url) {
+        // Open Stripe Checkout in new tab
+        window.open(data.url, '_blank');
+        toast.success('Redirecionando para o checkout seguro do Stripe...');
+        onClose();
+        
+        // Reset form
+        setCardName("");
+        setEmail("");
+      } else {
+        throw new Error('URL de checkout não retornada');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast.error(error instanceof Error ? error.message : 'Erro ao processar checkout');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (!plan) return null;
@@ -140,67 +150,28 @@ const CheckoutModal = ({ isOpen, onClose, plan }: CheckoutModalProps) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="glass border-primary/30 focus:border-primary/60"
+                required
               />
             </div>
-
-            <Separator className="bg-primary/20" />
 
             <div className="space-y-2">
               <Label htmlFor="cardName" className="text-sm font-medium">
-                Nome no Cartão
+                Nome Completo
               </Label>
               <Input
                 id="cardName"
-                placeholder="Nome completo"
+                placeholder="Seu nome completo"
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
                 className="glass border-primary/30 focus:border-primary/60"
+                required
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="cardNumber" className="text-sm font-medium">
-                Número do Cartão
-              </Label>
-              <div className="relative">
-                <Input
-                  id="cardNumber"
-                  placeholder="1234 5678 9012 3456"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                  maxLength={19}
-                  className="glass border-primary/30 focus:border-primary/60 pr-12"
-                />
-                <CreditCard className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="expiry" className="text-sm font-medium">
-                  Validade
-                </Label>
-                <Input
-                  id="expiry"
-                  placeholder="MM/AA"
-                  value={expiry}
-                  onChange={(e) => setExpiry(formatExpiry(e.target.value))}
-                  maxLength={5}
-                  className="glass border-primary/30 focus:border-primary/60"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cvc" className="text-sm font-medium">
-                  CVC
-                </Label>
-                <Input
-                  id="cvc"
-                  placeholder="123"
-                  value={cvc}
-                  onChange={(e) => setCvc(e.target.value.replace(/\D/g, "").slice(0, 4))}
-                  maxLength={4}
-                  className="glass border-primary/30 focus:border-primary/60"
-                />
+            <div className="p-4 rounded-lg bg-card/50 border border-primary/20">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Lock className="h-4 w-4 text-finops" />
+                <span>Os dados do cartão serão coletados de forma segura pelo Stripe</span>
               </div>
             </div>
 
@@ -213,12 +184,12 @@ const CheckoutModal = ({ isOpen, onClose, plan }: CheckoutModalProps) => {
                 {isProcessing ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Processando...
+                    Criando sessão...
                   </>
                 ) : (
                   <>
-                    <Lock className="mr-2 h-5 w-5" />
-                    Confirmar Pagamento
+                    <ExternalLink className="mr-2 h-5 w-5" />
+                    Continuar para Pagamento
                   </>
                 )}
               </Button>
