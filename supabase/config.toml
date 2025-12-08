@@ -1,4 +1,0 @@
-project_id = "pulso-app"
-
-[functions.create-checkout]
-verify_jwt = false
