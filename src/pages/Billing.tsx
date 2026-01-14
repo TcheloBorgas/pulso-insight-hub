@@ -42,14 +42,20 @@ const stripePaymentLinks = {
       withoutKey: "https://buy.stripe.com/test_3cI28rgMx3SY27xgyC8Zq0c",
       withKey: "https://buy.stripe.com/test_fZu8wPeEp89ecMb3LQ8Zq0d"
     },
-    yearly: null // Ainda não configurado
+    yearly: {
+      withoutKey: "https://buy.stripe.com/test_bJedR9gMx9di7rRgyC8Zq0q",
+      withKey: "https://buy.stripe.com/test_00w00jao9cpu27xbei8Zq0r"
+    }
   },
   elite: {
     monthly: {
       withoutKey: "https://buy.stripe.com/test_dRmcN5bsdcpu6nN4PU8Zq0e",
       withKey: "https://buy.stripe.com/test_bJe28r53PblqfYn0zE8Zq0f"
     },
-    yearly: null // Ainda não configurado
+    yearly: {
+      withoutKey: "https://buy.stripe.com/test_bJefZhdAl9di13taae8Zq0s",
+      withKey: "https://buy.stripe.com/test_5kQ6oHbsdblq7rR5TY8Zq0t"
+    }
   }
 };
 
