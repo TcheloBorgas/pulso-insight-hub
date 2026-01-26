@@ -176,18 +176,14 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        await login({ email: formData.email, password: formData.password });
+        await login(formData.email, formData.password);
         toast({
           title: "Login realizado",
           description: "Bem-vindo de volta!",
         });
         // Navigation handled by useEffect
       } else {
-        await signup({ 
-          email: formData.email, 
-          password: formData.password,
-          name: formData.name,
-        });
+        await signup(formData.email, formData.password, formData.name);
         // Show profile dialog for new users
         setShowProfileDialog(true);
       }
@@ -206,7 +202,7 @@ const Auth = () => {
     setLoading(true);
     try {
       await loginWithGoogle();
-    } catch (error) {
+    } catch {
       // Error handling is done in the auth context
     } finally {
       setLoading(false);
