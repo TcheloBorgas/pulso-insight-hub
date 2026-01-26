@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { User, Profile } from '@/types';
-import { authApi, profilesApi, onSessionExpired } from '@/lib/api';
-import { useNavigate } from 'react-router-dom';
+import { authApi, profilesApi, onSessionExpired, getRememberMe } from '@/lib/api';
 
 interface AuthState {
   user: User | null;
@@ -12,9 +11,10 @@ interface AuthState {
 interface AuthContextType extends AuthState {
   currentProfile: Profile | null;
   profiles: Profile[];
-  login: (email: string, password: string) => Promise<void>;
+  rememberMe: boolean;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
-  signup: (email: string, password: string, name: string) => Promise<void>;
+  signup: (email: string, password: string, name: string, rememberMe?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   setCurrentProfile: (profile: Profile | null) => void;
   setProfiles: (profiles: Profile[]) => void;
@@ -41,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [currentProfile, setCurrentProfileState] = useState<Profile | null>(null);
   const [profiles, setProfilesState] = useState<Profile[]>([]);
+  const [rememberMe, setRememberMeState] = useState(() => getRememberMe());
 
   // Clear all auth state
   const clearAuthState = useCallback(() => {
@@ -109,8 +110,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return unsubscribe;
   }, [clearAuthState]);
 
-  const login = async (email: string, password: string) => {
-    await authApi.login(email, password);
+  const login = async (email: string, password: string, remember: boolean = false) => {
+    await authApi.login(email, password, remember);
+    setRememberMeState(remember);
     
     // Fetch user data after successful login
     const userData = await authApi.getMe();
@@ -138,8 +140,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.location.href = `${apiUrl}/auth/google`;
   };
 
-  const signup = async (email: string, password: string, name: string) => {
-    await authApi.signup(email, password, name);
+  const signup = async (email: string, password: string, name: string, remember: boolean = false) => {
+    await authApi.signup(email, password, name, remember);
+    setRememberMeState(remember);
     
     // Fetch user data after successful signup
     const userData = await authApi.getMe();
@@ -191,6 +194,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         currentProfile,
         profiles,
+        rememberMe,
         login,
         loginWithGoogle,
         signup,
