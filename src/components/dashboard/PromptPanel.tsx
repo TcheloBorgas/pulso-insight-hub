@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send, Trash2, Copy, Clock, FolderOpen, FileCode, Plus, X, Upload, TestTube } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { comprehensionApi } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -12,17 +13,57 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import FileTree from "./FileTree";
+import FileTree, { type FileNode } from "./FileTree";
 
 interface EnvVariable {
   name: string;
   value: string;
 }
 
-interface FileNode {
-  name: string;
-  type: "file" | "folder";
-  children?: FileNode[];
+/** Converte a string file_tree da API (com * nos itens novos) em árvore para o FileTree. */
+function parseFileTreeString(fileTree: string): FileNode[] {
+  const lines = fileTree.trim().split("\n").filter(Boolean);
+  if (lines.length === 0) return [];
+
+  const items: { level: number; name: string; type: "file" | "folder"; isNew: boolean }[] = [];
+  for (const line of lines) {
+    const indent = line.match(/^\s*/)?.[0].length ?? 0;
+    const level = Math.floor(indent / 2);
+    let rest = line.trim();
+    const isNew = rest.endsWith("*");
+    if (isNew) rest = rest.slice(0, -1).trim();
+    const isFolder = rest.endsWith("/");
+    const name = isFolder ? rest.slice(0, -1) : rest;
+    if (!name) continue;
+    items.push({
+      level,
+      name,
+      type: isFolder ? "folder" : "file",
+      isNew,
+    });
+  }
+
+  const stack: { node: FileNode; level: number }[] = [];
+  const root: FileNode[] = [];
+
+  for (const item of items) {
+    const node: FileNode = {
+      name: item.name,
+      type: item.type,
+      isNew: item.isNew,
+      ...(item.type === "folder" ? { children: [] } : {}),
+    };
+    while (stack.length > 0 && stack[stack.length - 1].level >= item.level) stack.pop();
+    if (stack.length === 0) {
+      root.push(node);
+    } else {
+      const parent = stack[stack.length - 1].node;
+      if (parent.children) parent.children.push(node);
+    }
+    if (item.type === "folder") stack.push({ node, level: item.level });
+  }
+
+  return root;
 }
 
 interface PromptHistory {
@@ -31,8 +72,27 @@ interface PromptHistory {
   timestamp: Date;
 }
 
+interface ChatMessage {
+  id: string;
+  role: "user" | "system";
+  content: string;
+  timestamp: Date;
+}
+
+/** Monta o conteúdo .env a partir das variáveis (arquivo carregado ou pares nome-valor) */
+function buildEnvContent(envVars: EnvVariable[]): string {
+  return envVars
+    .map(({ name, value }) => {
+      const needsQuotes = /[\s#"']/.test(value);
+      return `${name}=${needsQuotes ? `"${value.replace(/"/g, '\\"')}"` : value}`;
+    })
+    .join("\n");
+}
+
 const PromptPanel = () => {
-  const [prompt, setPrompt] = useState("");
+  const { user } = useAuth();
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState("");
   const [envVars, setEnvVars] = useState<EnvVariable[]>([]);
   const [newVarName, setNewVarName] = useState("");
   const [newVarValue, setNewVarValue] = useState("");
@@ -43,6 +103,7 @@ const PromptPanel = () => {
   const [fileStructure, setFileStructure] = useState<FileNode[] | null>(null);
   const [showTestDialog, setShowTestDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const addEnvVariable = () => {
@@ -73,72 +134,86 @@ const PromptPanel = () => {
     setEnvVars(envVars.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
-    if (!prompt.trim()) return;
+  const handleSubmit = async () => {
+    const promptText = input.trim();
+    if (!promptText) return;
+    if (!user?.id) {
+      toast({
+        title: "Usuário não autenticado",
+        description: "Faça login para enviar o prompt",
+        variant: "destructive",
+      });
+      return;
+    }
 
+    const userMsg: ChatMessage = {
+      id: `u-${Date.now()}`,
+      role: "user",
+      content: promptText,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
     setLoading(true);
-    
-    // Simular envio e geração de estrutura de arquivos
-    setTimeout(() => {
-      const id = `REQ-${Date.now().toString(36).toUpperCase()}`;
-      setRequestId(id);
-      
-      const newEntry: PromptHistory = {
-        id,
-        text: prompt,
+
+    try {
+      const payload = {
+        usuario: user.id,
+        prompt: promptText,
+        root_path: folderPath.trim() || null,
+      };
+
+      const res = await comprehensionApi.run(payload);
+
+      const systemMsg: ChatMessage = {
+        id: `s-${Date.now()}`,
+        role: "system",
+        content: res.message,
         timestamp: new Date(),
       };
-      
-      setHistory([newEntry, ...history.slice(0, 4)]);
-      
-      // Estrutura de arquivos de exemplo baseada no prompt
-      const mockStructure: FileNode[] = [
-        {
-          name: "src",
-          type: "folder",
-          children: [
-            {
-              name: "components",
-              type: "folder",
-              children: [
-                { name: "Header.tsx", type: "file" },
-                { name: "Footer.tsx", type: "file" },
-              ],
-            },
-            {
-              name: "pages",
-              type: "folder",
-              children: [
-                { name: "Home.tsx", type: "file" },
-                { name: "Dashboard.tsx", type: "file" },
-              ],
-            },
-            {
-              name: "services",
-              type: "folder",
-              children: [
-                { name: "api.ts", type: "file" },
-              ],
-            },
-            { name: "App.tsx", type: "file" },
-          ],
-        },
-        { name: "package.json", type: "file" },
-        { name: "README.md", type: "file" },
-      ];
-      
-      setFileStructure(mockStructure);
-      setLoading(false);
-      
+      setMessages((prev) => [...prev, systemMsg]);
+
+      if (res.file_tree?.trim()) {
+        setFileStructure(parseFileTreeString(res.file_tree));
+      } else {
+        setFileStructure(null);
+      }
+      setRequestId(null);
+
+      const newEntry: PromptHistory = {
+        id: `req-${Date.now()}`,
+        text: promptText,
+        timestamp: new Date(),
+      };
+      setHistory((prev) => [newEntry, ...prev.slice(0, 4)]);
+
       toast({
-        title: "Prompt enviado",
-        description: `ID da requisição: ${id}`,
+        title: res.intent === "EXECUTAR" && res.should_execute ? "Executado" : "Resposta recebida",
+        description: res.next_action || undefined,
       });
-    }, 1000);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Tente novamente";
+      const is400 = msg.includes("400") || msg.toLowerCase().includes("vazio") || msg.toLowerCase().includes("obrigatório");
+      const errMsg: ChatMessage = {
+        id: `s-${Date.now()}`,
+        role: "system",
+        content: is400 ? `Validação: ${msg}` : `Erro: ${msg}`,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errMsg]);
+      toast({
+        title: is400 ? "Dados inválidos" : "Erro ao enviar prompt",
+        description: msg,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClear = () => {
-    setPrompt("");
+    setMessages([]);
+    setInput("");
     setEnvVars([]);
     setNewVarName("");
     setNewVarValue("");
@@ -158,8 +233,8 @@ const PromptPanel = () => {
   };
 
   const handleReusePrompt = (text: string) => {
-    setPrompt(text);
-    document.getElementById('prompt-input')?.focus();
+    setInput(text);
+    document.getElementById('chat-input')?.focus();
   };
 
   const handleEnvFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -222,6 +297,10 @@ const PromptPanel = () => {
     }
   };
 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleCopyCurl = (curl: string) => {
     navigator.clipboard.writeText(curl);
     toast({
@@ -230,29 +309,46 @@ const PromptPanel = () => {
     });
   };
 
+  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const comprehensionPayload = input.trim()
+    ? JSON.stringify({
+        usuario: user?.id ?? "USER_ID",
+        prompt: input.trim(),
+        root_path: folderPath.trim() || null,
+      })
+    : null;
+  const comprehensionCurl = comprehensionPayload
+    ? `curl -X POST "${apiBase}/comprehension/run" -H "Content-Type: application/json" -d '${comprehensionPayload.replace(/'/g, "'\\''")}'`
+    : null;
+
   const testCurls = [
+    ...(comprehensionCurl
+      ? [
+          {
+            name: "Comprehension Run (atual)",
+            curl: comprehensionCurl,
+          },
+        ]
+      : []),
     {
       name: "Health Check",
-      curl: `curl -X GET http://localhost:8000/health`,
+      curl: `curl -X GET ${apiBase}/health`,
     },
     {
       name: "API Status",
-      curl: `curl -X GET http://localhost:8000/api/status`,
+      curl: `curl -X GET ${apiBase}/api/status`,
     },
     {
       name: "List Users",
-      curl: `curl -X GET http://localhost:8000/api/users`,
+      curl: `curl -X GET ${apiBase}/api/users`,
     },
     {
       name: "Create User",
-      curl: `curl -X POST http://localhost:8000/api/users \\
-  -H "Content-Type: application/json" \\
-  -d '{"name": "John Doe", "email": "john@example.com"}'`,
+      curl: `curl -X POST ${apiBase}/api/users -H "Content-Type: application/json" -d '{"name": "John Doe", "email": "john@example.com"}'`,
     },
     {
       name: "Upload File",
-      curl: `curl -X POST http://localhost:8000/api/upload \\
-  -F "file=@/path/to/file.pdf"`,
+      curl: `curl -X POST ${apiBase}/api/upload -F "file=@/path/to/file.pdf"`,
     },
   ];
 
@@ -312,6 +408,9 @@ const PromptPanel = () => {
           >
             <p className="text-xs text-muted-foreground">
               Arraste um arquivo .env aqui ou use o botão acima
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              O .env será criado na pasta raiz do projeto ao enviar o prompt
             </p>
           </div>
           
@@ -385,34 +484,60 @@ const PromptPanel = () => {
           </div>
         </div>
 
-        {/* Prompt Principal */}
+        {/* Chat - Descrição do Projeto */}
         <div className="space-y-2">
-          <Label htmlFor="prompt-input" className="text-sm font-medium text-foreground flex items-center gap-2">
+          <Label htmlFor="chat-input" className="text-sm font-medium text-foreground flex items-center gap-2">
             <Send className="h-4 w-4 text-primary" />
             Descrição do Projeto
           </Label>
-          <Textarea
-            id="prompt-input"
-            placeholder="Ex.: 'Gerar blueprint de pastas e endpoints para um sistema de gestão de pedidos...'"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="min-h-[120px] resize-none border-0 focus-visible:ring-0 bg-transparent text-base"
-          />
+          <div className="min-h-[200px] max-h-[320px] overflow-y-auto rounded-lg border border-primary/30 bg-background/30 p-3 space-y-3">
+            {messages.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                Ex.: &quot;Gerar blueprint de pastas e endpoints para um sistema de gestão de pedidos...&quot;
+              </p>
+            ) : (
+              messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[90%] rounded-lg p-3 text-sm ${
+                      msg.role === "user"
+                        ? "bg-primary/20 text-foreground"
+                        : "bg-muted/50 text-foreground"
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                    <p className="text-xs opacity-70 mt-1">
+                      {msg.timestamp.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="flex gap-2">
+            <Input
+              id="chat-input"
+              placeholder="Ex.: 'Gerar blueprint de pastas e endpoints para um sistema de gestão de pedidos...'"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
+              className="border-primary/30 bg-background/50 focus-visible:ring-primary"
+            />
+            <Button
+              onClick={handleSubmit}
+              disabled={!input.trim() || loading}
+              className="shrink-0 h-10"
+            >
+              {loading ? "..." : <Send className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
 
         <div className="flex gap-3">
-          <Button 
-            onClick={handleSubmit} 
-            disabled={!prompt.trim() || loading}
-            className="flex-1 h-12 text-base font-medium"
-          >
-            {loading ? "Enviando..." : (
-              <>
-                <Send className="mr-2 h-5 w-5" />
-                Enviar Prompt
-              </>
-            )}
-          </Button>
           <Button
             variant="outline"
             onClick={() => setShowTestDialog(true)}
@@ -425,7 +550,7 @@ const PromptPanel = () => {
           <Button 
             variant="outline" 
             onClick={handleClear}
-            disabled={!prompt && !requestId}
+            disabled={messages.length === 0 && !requestId}
             className="h-12 px-6"
           >
             <Trash2 className="h-5 w-5" />
@@ -449,12 +574,15 @@ const PromptPanel = () => {
         <div className="glass-strong neon-glow rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-primary neon-glow">
-              Estrutura de Arquivos Gerada
+              Árvore do projeto
             </h3>
             <span className="text-xs text-muted-foreground font-mono">
               {requestId}
             </span>
           </div>
+          <p className="text-xs text-muted-foreground mb-2">
+            <span className="text-emerald-600 dark:text-emerald-400 font-medium">*</span> = criado neste run
+          </p>
           <div className="bg-background/30 rounded-xl p-4 max-h-96 overflow-y-auto border border-primary/20">
             <FileTree structure={fileStructure} />
           </div>
@@ -499,7 +627,7 @@ const PromptPanel = () => {
         </div>
       )}
 
-      {!prompt && !requestId && history.length === 0 && (
+      {messages.length === 0 && !requestId && history.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground">
             Descreva sua solicitação para começarmos
