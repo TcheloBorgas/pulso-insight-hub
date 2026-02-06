@@ -14,13 +14,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface StructureData {
+  tables: { name: string; records: number; indexes: number }[];
+}
+
+interface StatsData {
+  metrics: { label: string; value: string }[];
+  correlations: { vars: string; strength: string; value: string }[];
+}
+
+interface ModelData {
+  model: string;
+  metrics: { name: string; value: string }[];
+  insights: string[];
+  nextSteps: string[];
+}
+
 interface Message {
   id: string;
   role: "user" | "system";
   content: string;
   timestamp: Date;
   dataType?: "structure" | "stats" | "insights" | "model";
-  data?: unknown;
+  data?: StructureData | StatsData | ModelData;
 }
 
 /** Parseia "host:port" em { host, port } */
@@ -111,7 +127,7 @@ const DataChat = () => {
         role: "system",
         content,
         timestamp: new Date(),
-        data: res?.data ?? res?.result,
+        data: (res?.data ?? res?.result) as StructureData | StatsData | ModelData | undefined,
       };
 
       setMessages((prev) => [...prev, systemMessage]);
@@ -287,7 +303,7 @@ const DataChat = () => {
                 <p className="text-sm">{message.content}</p>
 
                 {/* Structure Data */}
-                {message.dataType === "structure" && message.data && (
+                {message.dataType === "structure" && message.data && 'tables' in message.data && (
                   <div className="mt-3 overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead>
@@ -299,7 +315,7 @@ const DataChat = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {message.data.tables.map((table: any, idx: number) => (
+                        {(message.data as StructureData).tables.map((table, idx) => (
                           <tr key={idx} className="border-b border-border/50">
                             <td className="py-1 px-2 font-mono">{table.name}</td>
                             <td className="py-1 px-2">{table.records.toLocaleString('pt-BR')}</td>
@@ -315,10 +331,10 @@ const DataChat = () => {
                 )}
 
                 {/* Statistics Data */}
-                {message.dataType === "stats" && message.data && (
+                {message.dataType === "stats" && message.data && 'metrics' in message.data && (
                   <div className="mt-3 space-y-3">
                     <div className="grid grid-cols-2 gap-2">
-                      {message.data.metrics.map((metric: any, idx: number) => (
+                      {(message.data as StatsData).metrics.map((metric, idx) => (
                         <div key={idx} className="p-2 bg-background/20 rounded">
                           <p className="text-xs text-muted-foreground">{metric.label}</p>
                           <p className="text-sm font-semibold">{metric.value}</p>
@@ -332,7 +348,7 @@ const DataChat = () => {
                         Correlações:
                       </p>
                       <div className="space-y-1">
-                        {message.data.correlations.map((corr: any, idx: number) => (
+                        {(message.data as StatsData).correlations.map((corr, idx) => (
                           <div key={idx} className="flex items-center justify-between text-xs p-1.5 bg-background/20 rounded">
                             <span>{corr.vars}</span>
                             <Badge variant={corr.strength === "Forte" ? "default" : "secondary"} className="text-xs">
@@ -346,15 +362,15 @@ const DataChat = () => {
                 )}
 
                 {/* Model Data */}
-                {message.dataType === "model" && message.data && (
+                {message.dataType === "model" && message.data && 'model' in message.data && (
                   <div className="mt-3 space-y-3">
                     <div className="p-3 bg-background/20 rounded">
                       <p className="text-xs text-muted-foreground mb-1">Modelo sugerido:</p>
-                      <p className="text-sm font-bold">{message.data.model}</p>
+                      <p className="text-sm font-bold">{(message.data as ModelData).model}</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
-                      {message.data.metrics.map((metric: any, idx: number) => (
+                      {(message.data as ModelData).metrics.map((metric, idx) => (
                         <div key={idx} className="p-2 bg-background/20 rounded text-center">
                           <p className="text-xs text-muted-foreground">{metric.name}</p>
                           <p className="text-lg font-bold text-success">{metric.value}</p>
@@ -364,7 +380,7 @@ const DataChat = () => {
 
                     <div className="space-y-2">
                       <p className="text-xs font-semibold">💡 Insights:</p>
-                      {message.data.insights.map((insight: string, idx: number) => (
+                      {(message.data as ModelData).insights.map((insight, idx) => (
                         <div key={idx} className="flex items-start gap-2 p-2 bg-warning/10 rounded">
                           <Badge className="text-xs bg-warning text-warning-foreground">!</Badge>
                           <span className="text-xs">{insight}</span>
@@ -375,7 +391,7 @@ const DataChat = () => {
                     <div className="space-y-1">
                       <p className="text-xs font-semibold">Próximos passos:</p>
                       <ul className="text-xs space-y-1">
-                        {message.data.nextSteps.map((step: string, idx: number) => (
+                        {(message.data as ModelData).nextSteps.map((step, idx) => (
                           <li key={idx} className="flex items-start gap-2">
                             <span className="text-primary">→</span>
                             <span>{step}</span>
@@ -443,7 +459,7 @@ const DataChat = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
-          <Button onClick={handleSend} disabled={!input.trim() || loading}>
+          <Button onClick={() => handleSend()} disabled={!input.trim() || loading}>
             <Send className="h-4 w-4" />
           </Button>
         </div>
